@@ -1,0 +1,20 @@
+Package: redisProgress
+Type: Package
+Title: Follow task progression using Redis
+Version: 0.1.0
+Author: Clément TURBELIN
+Maintainer: Clément TURBELIN <clement.turbelin@upmc.fr>
+Description: Allow to follow task run progression in a distributed context, using a Redis instance to exchange data about running tasks Redis is not used as a job queue here (unlike doRedis package), only as a mean to store data about task progression.
+License: MIT
+Encoding: UTF-8
+LazyData: true
+Depends:
+    R (>= 3.0.0)
+Imports: 
+    methods
+Suggest: 
+    rredis,
+    RCppRedis,
+    testthat,
+    rmarkdown
+RoxygenNote: 6.0.1

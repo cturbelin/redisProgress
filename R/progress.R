@@ -95,7 +95,7 @@ redis_progress_bar = function(name, redis, debug=FALSE) {
     }
 
     message = function(msg) {
-        redis$pushTail(log.name, paste0("[", task,"] ", msg))
+        redis$pushTail(log.name, paste0(format(fmt="%Y-%m-%d %T", Sys.time()), " [", task,"] ", msg))
     }
 
     # Public interface

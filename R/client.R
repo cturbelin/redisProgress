@@ -55,6 +55,20 @@ RedisClientRRedis = setRefClass("RedisClientRRedis",
             as.numeric(rredis::redisLPush(key, value))
         },
 
+        getTail = function(key, size, start=NULL) {
+           len = as.integer(rredis::redisLLen(key))
+           if(len == 0) {
+               return(c())
+           }
+           if(size > len) {
+               size = len
+           }
+           if( is.null(start) ) {
+               start = max(0, len - size)
+           }
+           unlist(rredis::redisLRange(key, start=start, end=len - 1))
+        },
+
         set = function(key, value) {
             rredis::redisSet(key, value) == "OK"
         },
@@ -143,6 +157,20 @@ RedisClientRcpp = setRefClass("RedisClientRcpp",
             cnx$listLPush(key, value) > 0
         },
 
+        getTail = function(key, size, start=NULL) {
+            len = as.integer(cnx$llen(key))
+            if(len == 0L) {
+                return(c())
+            }
+            if(size > len) {
+                size = len
+            }
+            if( is.null(start) ) {
+                start = max(0L, len - size)
+            }
+            unlist(cnx$listRange(key, start=start, end=len - 1))
+        },
+
         set = function(key, value) {
             "Set key value"
             cnx$set(key, value) > 0
@@ -225,6 +253,19 @@ RedisClientRedux = setRefClass("RedisClientRedux",
             cnx$LPUSH(key, value) > 0
         },
 
+        getTail = function(key, size, start=NULL) {
+            len = as.integer(cnx$LLEN(key))
+            if(len == 0L) {
+                return(c())
+            }
+            if(size > len) {
+                size = len
+            }
+            if( is.null(start) ) {
+                start = max(0, len - size)
+            }
+            unlist(cnx$LRANGE(key, start=start, end=len - 1))
+        },
         set = function(key, value) {
             cnx$SET(key, value) > 0
         },

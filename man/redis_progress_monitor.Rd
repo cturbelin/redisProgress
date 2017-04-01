@@ -4,26 +4,10 @@
 \alias{redis_progress_monitor}
 \title{Monitor Progress of a tasks queue}
 \usage{
-redis_progress_monitor(name = NULL, key = NULL, use.bar = TRUE,
-  bar.size = 20, steps = NULL, ncol = 2, sleep = 1, log.size = 10,
-  redis = NULL)
+redis_progress_monitor(from, redis = NULL, options = list())
 }
 \arguments{
-\item{name}{name of the queue (used unless \code{key} is provided)}
-
-\item{key}{key name where the current queue name is stored}
-
-\item{use.bar}{use progress bar}
-
-\item{bar.size}{size of the progress bar (number of chars)}
-
-\item{steps}{number of steps of all the tasks (if always the same and not provided by task)}
-
-\item{ncol}{number of columns}
-
-\item{sleep}{number of seconds to sleep between update}
-
-\item{log.size}{number of log messages to show (only lasts)}
+\item{from}{source of the queue to monitor, simplest is the queue name (without the queue prefix)}
 
 \item{redis}{redis client definintion object, returned by \code{redis_client()}}
 }

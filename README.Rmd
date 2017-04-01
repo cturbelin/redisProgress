@@ -82,7 +82,7 @@ stopImplicitCluster()
 `progress` object is propagated accross all R workers ensuring the tasks are registered in the same 
 job queue and on the same Redis server (!)
 
-In this previous example the queue name is generated, to ensure it is unique each time the program is run. The 
+In the example above the queue name is generated, to ensure it is unique each time the program is run. The 
 last generated queue name is published using the key passed to the `publish` parameter.
 
 ### Monitoring task progress of a queue

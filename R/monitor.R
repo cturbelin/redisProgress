@@ -20,7 +20,7 @@
 #' @section from
 #' from parameter can be either a single charater value,
 #' \describe{
-#'   \item{key}{ redis key where the current queue name is stored in case of publish strategy}
+#'   \item{key}{redis key where the current queue name is stored in case of publish strategy}
 #' }
 redis_progress_monitor = function(from, redis=NULL, options=list()) {
 

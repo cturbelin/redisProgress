@@ -95,10 +95,10 @@ library(redisProgress)
 redis = redis_client("rredis") 
 
 # Known and fixed queue name
-redis_progress_monitor(name="my-queue-name", redis=redis)
+redis_progress_monitor(from="my-queue-name", redis=redis)
 
-# Queue name has been generated and published in another redis key, use "key" to monitor the current queue name
-redis_progress_monitor(key="jobs:clement", redis=redis)
+# Queue name has been generated and published in another redis key, use "key" to get the real queue name from this key
+redis_progress_monitor(list(key="jobs:clement"), redis=redis)
 
 ```
 

@@ -4,9 +4,11 @@
 #'
 #' @param from source of the queue to monitor, simplest is the queue name (without the queue prefix)
 #' @param redis redis client definintion object, returned by \code{redis_client()}
+#' @param options list (see section options)
 #' @export
 #'
-#' @section options
+#' @section Options.
+#'
 #' \describe{
 #' \item{use.bar}{use progress bar}
 #' \item{bar.size}{size of the progress bar (number of chars)}
@@ -17,7 +19,7 @@
 #' }
 #'
 #'
-#' @section from
+#' @section from Parameter.
 #' from parameter can be either a single charater value,
 #' \describe{
 #'   \item{key}{redis key where the current queue name is stored in case of publish strategy}

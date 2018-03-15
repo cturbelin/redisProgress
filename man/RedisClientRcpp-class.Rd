@@ -22,6 +22,8 @@ Client interface for RcppRedis library
 
 \item{\code{hashGet(key, field)}}{Get field value in hash named by key}
 
+\item{\code{hashIncrBy(key, field, value)}}{increment [field] in [key] hash}
+
 \item{\code{hashSet(key, field, value)}}{Set [field] of hash named by [key]}
 
 \item{\code{pushTail(key, value)}}{Push value on tail of the list named by key}

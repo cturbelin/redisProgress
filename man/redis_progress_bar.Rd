@@ -44,7 +44,6 @@ Declare the starting of a task
  \item{taskname}{Name of the starting task (cannot contain colon character) }
  \item{steps}{Total number of steps of the task}
  \item{init}{Initial step value}
- \item{module}{if defined, progress state will be updated to redis only when step value is a multiple of modulo}
 }
 }
 

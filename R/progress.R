@@ -31,7 +31,6 @@
 #'  \item{taskname}{Name of the starting task (cannot contain colon character) }
 #'  \item{steps}{Total number of steps of the task}
 #'  \item{init}{Initial step value}
-#'  \item{module}{if defined, progress state will be updated to redis only when step value is a multiple of modulo}
 #' }
 #'
 #' @section \code{step_task(newvalue)}:
@@ -45,10 +44,9 @@ redis_progress_bar = function(name, redis, debug=FALSE) {
     value = NULL
     steps = NULL
     cnx = NULL
-    modulo = NULL
     log.name = paste0(name, ":logs")
 
-    start_task = function(taskname, steps=0, init = 0, modulo=NULL) {
+    start_task = function(taskname, steps=0, init = 0) {
 
         if( grepl(":", taskname, fixed = TRUE) ) {
             warning("Taskname should not contain colon character, fixing to underscore")
@@ -57,7 +55,6 @@ redis_progress_bar = function(name, redis, debug=FALSE) {
 
         task <<- taskname
         value <<- init
-        modulo <<- modulo
         cnx <<- redis$connect()
 
         if(debug) {
@@ -65,31 +62,25 @@ redis_progress_bar = function(name, redis, debug=FALSE) {
         }
         redis$hashSet(name, paste0(task,":started"), as.numeric(Sys.time()))
         redis$hashSet(name, paste0(task,":steps"), as.numeric(steps))
+        redis$hashSet(name, task, value)
         update()
     }
 
     step_task = function(newvalue) {
         value <<- newvalue
+        redis$hashSet(name, task, value)
         update()
     }
 
     incr_task = function(by=1) {
-        value <<- value + by
+        value <<- redis$hashIncrBy(name, task, by)
         update()
     }
 
     update = function() {
-        if( !is.null(modulo) ) {
-            # Only update each time value is multiple of modulo value
-            if( ! (value %% modulo == 0)) {
-                return()
-            }
-        }
         if(debug) {
             cat("Updating task ", task," to value ", value, "\n")
         }
-        # If steps is defined, the def
-        redis$hashSet(name, task, value)
         # Update time of update
         redis$hashSet(name, paste0(task,":updated"), as.numeric(Sys.time()))
     }
@@ -193,7 +184,7 @@ create_redis_progress = function(name, redis=NULL, publish=NULL, debug=FALSE, un
 
     progress = redis_progress_bar(name, redis, debug=debug)
     reg.finalizer(environment(progress$start), function(env) {
-        cat("Closing ", env$redis,"\n")
+        cat("Closing ", env$redis$name(),"\n")
     }, onexit=TRUE)
 
     if( !is.null(publish) ) {
@@ -205,6 +196,7 @@ create_redis_progress = function(name, redis=NULL, publish=NULL, debug=FALSE, un
             redis$set(publish, name)
         }
         if(type == "list") {
+            # @TODO protecting if key already exists an is not a list
             redis$pushTail(publish, name)
         }
         if(debug) {

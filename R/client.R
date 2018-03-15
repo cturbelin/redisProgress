@@ -20,6 +20,14 @@ RedisClientRRedis = setRefClass("RedisClientRRedis",
             database <<- as.integer(database)
         },
 
+        name = function() {
+          n = paste0(args$host,":",args$port)
+          if( !is.na(database) ) {
+              n = paste0(n, "/", database)
+          }
+          n
+        },
+
         connect = function() {
             require(rredis)
             cnx <<- do.call(rredis::redisConnect, args)
@@ -41,6 +49,10 @@ RedisClientRRedis = setRefClass("RedisClientRRedis",
 
         hashGetAll = function(key) {
             rredis::redisHGetAll(key)
+        },
+
+        hashIncrBy = function(key, field, value) {
+            rredis::redisHIncrBy(key = key, field=field, value=value)
         },
 
         delete = function(key) {
@@ -107,6 +119,13 @@ RedisClientRcpp = setRefClass("RedisClientRcpp",
             args <<- a
             database <<- as.integer(database)
         },
+        name = function() {
+            n = paste0(args$host,":",args$port)
+            if( !is.na(database) ) {
+                n = paste0(n, "/", database)
+            }
+            n
+        },
         connect = function() {
             "Connect to the Redis database"
             require(RcppRedis)
@@ -133,6 +152,12 @@ RedisClientRcpp = setRefClass("RedisClientRcpp",
         hashSet = function(key, field, value) {
             "Set [field] of hash named by [key]"
             cnx$hset(key, field, value) > 0
+        },
+
+
+        hashIncrBy = function(key, field, value) {
+          "increment [field] in [key] hash  "
+            cnx$hincrby(key, field, value)
         },
 
         hashGet = function(key, field) {
@@ -207,14 +232,21 @@ RedisClientRedux = setRefClass("RedisClientRedux",
       type="character"
   ),
   methods = list(
-          initialize = function(host="localhost", port=6379, database=NA, ..., .type="redux") {
+        initialize = function(host="localhost", port=6379, database=NA, ..., .type="redux") {
               a = list(...)
               a$host = host
               a$port = port
               args <<- a
               database <<- as.integer(database)
               type <<- .type
-          },
+        },
+        name = function() {
+            n = paste0(args$host,":",args$port)
+            if( !is.na(database) ) {
+                n = paste0(n, "/", database)
+            }
+            n
+        },
         connect = function() {
             require(type)
             api_func = switch(type,
@@ -235,6 +267,11 @@ RedisClientRedux = setRefClass("RedisClientRedux",
 
         hashGet = function(key, field=NULL) {
             cnx$HGET(key, field)
+        },
+
+        hashIncrBy = function(key, field, value) {
+            "increment [field] in [key] hash  "
+            cnx$HINCRBY(key, field, value)
         },
 
         hashGetAll = function(key) {

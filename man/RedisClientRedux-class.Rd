@@ -8,4 +8,9 @@
 \description{
 Client interface for redux & rrlite library
 }
+\section{Methods}{
+
+\describe{
+\item{\code{hashIncrBy(key, field, value)}}{increment [field] in [key] hash}
+}}
 

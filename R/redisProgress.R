@@ -5,8 +5,11 @@
 #' @name redisProgress
 #' @docType package
 #' @keywords internal
+#' @importFrom stats runif
+#' @importFrom methods new is
+#' @importFrom utils modifyList
+#'
 "_PACKAGE"
 
-#' @importFrom stats runif
-#' @importFrom methods new
-NULL
+
+

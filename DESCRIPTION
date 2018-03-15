@@ -5,7 +5,7 @@ Version: 0.1.0
 Author: Clément TURBELIN
 Maintainer: Clément TURBELIN <clement.turbelin@upmc.fr>
 Description: Follow tasks progression in a distributed context, using a Redis instance to exchange data about running tasks. Redis is not used as a job queue here (unlike doRedis package), only as a mean to share data about tasks progression.
-License: MIT
+License: MIT + file LICENSE
 Encoding: UTF-8
 LazyData: true
 Depends:
@@ -14,7 +14,7 @@ Imports:
     methods
 Suggests: 
     rredis,
-    RCppRedis,
+    RcppRedis,
     redux,
     testthat,
     knitr,

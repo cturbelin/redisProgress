@@ -1,11 +1,3 @@
-#' redisProgress Package
-#'
-#' @author Clement Turbelin
-#' @title Progress bar for distributed task with redis backend
-#' @name redisProgress
-#' @docType package
-NULL
-
 #' Get package options
 #' From 'redis.progress' options() entry
 get_option = function(name=NULL) {

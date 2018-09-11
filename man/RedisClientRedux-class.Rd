@@ -12,5 +12,7 @@ Client interface for redux & rrlite library
 
 \describe{
 \item{\code{hashIncrBy(key, field, value)}}{increment [field] in [key] hash}
+
+\item{\code{hashSetCounter(key, field, value)}}{Set counter [field] of hash named by [key]}
 }}
 

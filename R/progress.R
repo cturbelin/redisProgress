@@ -62,7 +62,7 @@ redis_progress_bar = function(name, redis, debug=FALSE) {
         }
         redis$hashSet(name, paste0(task,":started"), as.numeric(Sys.time()))
         redis$hashSet(name, paste0(task,":steps"), as.numeric(steps))
-        redis$hashSet(name, task, value)
+        redis$hashSetCounter(name, task, value)
         update()
     }
 
@@ -117,6 +117,9 @@ redis_progress_bar = function(name, redis, debug=FALSE) {
         #' get the value
         value = function() {
             value
+        },
+        debug = function() {
+            as.list(environment())
         }
 
     ), class="redis_progress")

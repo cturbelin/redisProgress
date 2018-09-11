@@ -31,6 +31,7 @@ The returned instance exposes the following functions :
 \item{get(key)}{get key value}
 \item{hashGet(key, field)}{get field value in HashSet named by key}
 \item{hashSet(key, field, value)}{set field value in HashSet named by key}
+\item{hashSetCounter(key, field, value)}{set field value for a counter in HashSet named by key}
 \item{delete(key)}{remove the key key value}
 \item{exists(key)}{returns TRUE the key exists}
 \item{pushTail(key, value)}{add a value on the tail of the list named by key}

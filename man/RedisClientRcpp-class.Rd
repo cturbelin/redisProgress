@@ -26,6 +26,8 @@ Client interface for RcppRedis library
 
 \item{\code{hashSet(key, field, value)}}{Set [field] of hash named by [key]}
 
+\item{\code{hashSetCounter(key, field, value)}}{Set [field] of hash named by [key]}
+
 \item{\code{pushTail(key, value)}}{Push value on tail of the list named by key}
 
 \item{\code{set(key, value)}}{Set key value}

@@ -17,6 +17,7 @@ RedisClientRRedis = setRefClass("RedisClientRRedis",
             a$host = host
             a$port = port
             args <<- a
+            cnx <<- NULL
             database <<- as.integer(database)
         },
 
@@ -30,7 +31,9 @@ RedisClientRRedis = setRefClass("RedisClientRRedis",
 
         connect = function() {
             require(rredis)
-            cnx <<- do.call(rredis::redisConnect, args)
+            aa = args
+            aa$returnRef = TRUE
+            cnx <<- do.call(rredis::redisConnect, aa)
             if( !is.na(database) ) {
                 rredis::redisSelect(database)
             }
@@ -41,6 +44,12 @@ RedisClientRRedis = setRefClass("RedisClientRRedis",
             rredis::redisHSet(key = key, field=field, value=value, NX=FALSE)
             # rredis HSet returns "0" whatever success or not
             return(TRUE)
+        },
+
+        # Set counter value, to be usable by incr()
+        hashSetCounter = function(key, field, value) {
+            value = charToRaw(as.character(value))
+            rredis::redisHSet(key = key, field=field, value=value, NX=FALSE)
         },
 
         hashGet = function(key, field) {
@@ -93,7 +102,7 @@ RedisClientRRedis = setRefClass("RedisClientRRedis",
             rredis::redisKeys(pattern)
         },
         handle = function(name=NULL) {
-            cap = c("keys"=TRUE, "hashGetAll"=TRUE)
+            cap = c("keys"=TRUE, "hashGetAll"=TRUE, "stringCounter"=TRUE)
             if( is.null(name) ) {
                 cap
             } else {
@@ -154,6 +163,10 @@ RedisClientRcpp = setRefClass("RedisClientRcpp",
             cnx$hset(key, field, value) > 0
         },
 
+        hashSetCounter = function(key, field, value) {
+            "Set [field] of hash named by [key]"
+            cnx$hset(key, field, value) > 0
+        },
 
         hashIncrBy = function(key, field, value) {
           "increment [field] in [key] hash  "
@@ -162,7 +175,7 @@ RedisClientRcpp = setRefClass("RedisClientRcpp",
 
         hashGet = function(key, field) {
             "Get field value in hash named by key"
-                cnx$hget(key, field)
+            cnx$hget(key, field)
         },
 
         delete = function(key) {
@@ -207,7 +220,7 @@ RedisClientRcpp = setRefClass("RedisClientRcpp",
         },
 
         keys = function(pattern="*") {
-            unlist(client$cnx$exec(paste0("KEYS ", pattern)))
+            unlist(cnx$exec(paste0("KEYS ", pattern)))
         },
 
         handle = function(name=NULL) {
@@ -248,7 +261,7 @@ RedisClientRedux = setRefClass("RedisClientRedux",
             n
         },
         connect = function() {
-            require(type)
+            require(type, character.only=TRUE)
             api_func = switch(type,
                 "redux"=redux::hiredis,
                 "rrlite"=rrlite::hirlite
@@ -257,12 +270,19 @@ RedisClientRedux = setRefClass("RedisClientRedux",
             p$host = args$host
             p$port = args$port
             p$password = args$password
-            p$db = database
+            if( !is.na(database) ) {
+             p$db = database
+            }
             cnx <<- do.call(api_func, p)
             cnx
         },
         hashSet = function(key, field, value) {
             cnx$HSET(key, field, value) == "OK"
+        },
+
+        hashSetCounter = function(key, field, value) {
+            "Set counter [field] of hash named by [key]"
+            cnx$HSET(key, field, value) > 0
         },
 
         hashGet = function(key, field=NULL) {
@@ -342,6 +362,7 @@ RedisClientRedux = setRefClass("RedisClientRedux",
 #' \item{get(key)}{get key value}
 #' \item{hashGet(key, field)}{get field value in HashSet named by key}
 #' \item{hashSet(key, field, value)}{set field value in HashSet named by key}
+#' \item{hashSetCounter(key, field, value)}{set field value for a counter in HashSet named by key}
 #' \item{delete(key)}{remove the key key value}
 #' \item{exists(key)}{returns TRUE the key exists}
 #' \item{pushTail(key, value)}{add a value on the tail of the list named by key}

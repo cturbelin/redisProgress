@@ -4,12 +4,16 @@
 \alias{redis_progress_monitor}
 \title{Monitor Progress of a tasks queue}
 \usage{
-redis_progress_monitor(from, redis = NULL, options = list())
+redis_progress_monitor(from, redis = NULL, options = list(), debug = TRUE)
 }
 \arguments{
 \item{from}{source of the queue to monitor, simplest is the queue name (without the queue prefix)}
 
 \item{redis}{redis client definintion object, returned by \code{redis_client()}}
+
+\item{options}{list (see section options)}
+
+\item{debug}{show verbose information message if TRUE (for dev)}
 }
 \description{
 Basic monitoring of task queue progress created using

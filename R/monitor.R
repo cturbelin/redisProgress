@@ -5,6 +5,7 @@
 #' @param from source of the queue to monitor, simplest is the queue name (without the queue prefix)
 #' @param redis redis client definintion object, returned by \code{redis_client()}
 #' @param options list (see section options)
+#' @param debug show verbose information message if TRUE (for dev)
 #' @export
 #'
 #' @section Options.
@@ -24,7 +25,7 @@
 #' \describe{
 #'   \item{key}{redis key where the current queue name is stored in case of publish strategy}
 #' }
-redis_progress_monitor = function(from, redis=NULL, options=list()) {
+redis_progress_monitor = function(from, redis=NULL, options=list(), debug=TRUE) {
 
     if( is.null(redis) ) {
         redis = redis_client()
@@ -34,7 +35,15 @@ redis_progress_monitor = function(from, redis=NULL, options=list()) {
         stop("This redis client doesnt implement hashGetAll, it is not useable to monitor tasks")
     }
 
+    if(debug) {
+        cat("Connecting")
+    }
     redis$connect()
+    if( !is.null(redis$cnx) ) {
+        if(debug) {
+            cat(" Connected\n")
+        }
+    }
 
     if(is.character(from)) {
         queues = redis_queue_name(from)
@@ -43,12 +52,12 @@ redis_progress_monitor = function(from, redis=NULL, options=list()) {
             stop("from should be either a character vector")
         }
         if( !is.null(from$name) ) {
-            queues = redis_queue_name(form$name)
+            queues = redis_queue_name(from$name)
         }
         if( !is.null(from$key) ) {
             queues = redis$get(from$key)
             if(is.null(queues)) {
-                stop(paste("Unable to find queue name using key", key))
+                stop(paste("Unable to find queue name using key", from$key))
             }
         }
 
@@ -79,6 +88,7 @@ redis_progress_monitor = function(from, redis=NULL, options=list()) {
         } else {
             format = "%5d"
         }
+
         elapsed = floor(as.numeric(Sys.time()) - started)
 
         if(!is.null(prop) && options$use.bar) {
@@ -100,12 +110,22 @@ redis_progress_monitor = function(from, redis=NULL, options=list()) {
 
     cls = clear_console()
 
+    if(debug) {
+        cat("Monitoring queues ", queues, "\n")
+        cls = function() {}
+    } else {
+        cls = clear_console()
+    }
+
     while(TRUE) {
         # Clear console
         cls()
         for(queue.index in seq_along(queues)) {
 
             name = queues[queue.index]
+            if(debug) {
+                cat("Queue : ", name,"\n")
+            }
 
             # Get all data
             h = redis$hashGetAll(name)
@@ -114,6 +134,10 @@ redis_progress_monitor = function(from, redis=NULL, options=list()) {
                 cat("Unable to get hash", name," waiting...\n")
                 Sys.sleep(5)
                 next()
+            } else {
+                if(debug) {
+                    cat("Hash ", length(h), "fields\n")
+                }
             }
 
             n = names(h)
@@ -123,6 +147,10 @@ redis_progress_monitor = function(from, redis=NULL, options=list()) {
             tasks = n[grepl("^[^:]+$", n)]
 
             values = h[tasks]
+
+            # For some client type counter are stored are raw string, convert
+            values = lapply(values, as.integer)
+
             started = h[ paste0(tasks,":started") ]
             steps = h[ paste0(tasks,":steps") ]
 
@@ -139,7 +167,7 @@ redis_progress_monitor = function(from, redis=NULL, options=list()) {
             }
 
             # Format console
-            cat("\nJobs ", name, " started at ", as.POSIXct(h$"_created_", origin="1970-01-01"),"\n\n")
+            cat("\nJobs ", name, " started at ", format(format ="%Y-%m-%d %T", as.POSIXct(h$"_created_", origin="1970-01-01")),"\n\n")
             g = floor(1:length(tt) / options$ncol) + 1
             tt = split(tt, g)
             tt = unlist(lapply(tt, paste, collapse="    "))
@@ -156,6 +184,11 @@ redis_progress_monitor = function(from, redis=NULL, options=list()) {
 
 #' @noRd
 clear_console = function() {
+    default_cls = function() { cat("\014") }
+
+    if(Sys.getenv("RSTUDIO") == "1") {
+        return(default_cls)
+    }
     os = R.version$os
     if(any(grepl("^darwin", os), grepl("linux",os))) {
         term = Sys.getenv("TERM")
@@ -167,5 +200,4 @@ clear_console = function() {
         }
     }
     # default clear function
-    function() { cat("\014") }
 }

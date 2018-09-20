@@ -8,8 +8,7 @@
 #' @param debug show verbose information message if TRUE (for dev)
 #' @export
 #'
-#' @section Options.
-#'
+#' @section Options:
 #' \describe{
 #' \item{use.bar}{use progress bar}
 #' \item{bar.size}{size of the progress bar (number of chars)}
@@ -20,7 +19,7 @@
 #' }
 #'
 #'
-#' @section from Parameter.
+#' @section from Parameter:
 #' from parameter can be either a single charater value,
 #' \describe{
 #'   \item{key}{redis key where the current queue name is stored in case of publish strategy}

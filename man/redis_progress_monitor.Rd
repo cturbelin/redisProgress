@@ -18,3 +18,23 @@ redis_progress_monitor(from, redis = NULL, options = list(), debug = TRUE)
 \description{
 Basic monitoring of task queue progress created using
 }
+\section{Options}{
+
+\describe{
+\item{use.bar}{use progress bar}
+\item{bar.size}{size of the progress bar (number of chars)}
+\item{steps}{number of steps of all the tasks (if always the same and not provided by each task)}
+\item{ncol}{number of columns to use to show the tasks progress}
+\item{sleep}{number of seconds to sleep between update}
+\item{log.size}{number of log messages to show (only lasts)}
+}
+}
+
+\section{from Parameter}{
+
+from parameter can be either a single charater value,
+\describe{
+  \item{key}{redis key where the current queue name is stored in case of publish strategy}
+}
+}
+

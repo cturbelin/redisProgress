@@ -351,7 +351,7 @@ RedisClientRedux = setRefClass("RedisClientRedux",
 #' Only needed commands by this package are implemented. It's a very simple implementation to avoid
 #' extra dependency, limited to this package needs
 #'
-#' The returned "client" holds connexion configuration and is transmissible as a variable in distributed execution
+#' The returned "client" embeds connexion configuration and can be propagated in distributed workers
 #' (like in foreach). So the client connexion parameters are only to be defined once
 #'
 #' @details
@@ -380,6 +380,16 @@ RedisClientRedux = setRefClass("RedisClientRedux",
 #' @param type type of client to use (rredis, rcpp for RcppRedis)
 #' @param ... paramerters to transmit to the client implementation (host, port, ...)
 #' @return environment
+#'
+#' @examples
+#' \dontrun{
+#' # Create a simple client using  rredis as backend
+#' client = redis_client(host="127.0.0.1", type="rredis")
+#'
+#' # Using another backend and database number 2
+#' client = redis_client(host="127.0.0.1", type="redux", database=2)
+#' }
+#'
 #' @export
 redis_client = function(type=NULL, ...) {
     if( is.null(type) ) {

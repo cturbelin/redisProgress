@@ -24,6 +24,19 @@
 #' \describe{
 #'   \item{key}{redis key where the current queue name is stored in case of publish strategy}
 #' }
+#'
+#' @examples
+#' \dontrun{
+#' # Follow the progress of the queue named "queue1"
+#' redis_progress_monitor("queue1")
+#'
+#' # Following tasks published in a list
+#' redis_progress_monitor(list(key="myqueues"))
+#'
+#' # Using progress bar and show only the 10 last log messages
+#' redis_progress_monitor(from=queue1, options=list(use.bar=TRUE, log.size=10))
+#' }
+#'
 redis_progress_monitor = function(from, redis=NULL, options=list(), debug=TRUE) {
 
     if( is.null(redis) ) {

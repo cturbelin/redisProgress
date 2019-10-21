@@ -4,7 +4,6 @@
 \name{redisProgress}
 \alias{redisProgress}
 \alias{redisProgress-package}
-\alias{redisProgress-package}
 \title{Progress bar for distributed tasks with redis backend}
 \description{
 redisProgress Package

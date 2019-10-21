@@ -4,7 +4,8 @@
 \alias{redis_progress_monitor}
 \title{Monitor Progress of a tasks queue}
 \usage{
-redis_progress_monitor(from, redis = NULL, options = list(), debug = TRUE)
+redis_progress_monitor(from, redis = NULL, options = list(),
+  debug = TRUE)
 }
 \arguments{
 \item{from}{source of the queue to monitor, simplest is the queue name (without the queue prefix)}
@@ -38,3 +39,16 @@ from parameter can be either a single charater value,
 }
 }
 
+\examples{
+\dontrun{
+# Follow the progress of the queue named "queue1"
+redis_progress_monitor("queue1")
+
+# Following tasks published in a list
+redis_progress_monitor(list(key="myqueues"))
+
+# Using progress bar and show only the 10 last log messages
+redis_progress_monitor(from=queue1, options=list(use.bar=TRUE, log.size=10))
+}
+
+}

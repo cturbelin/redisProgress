@@ -1,7 +1,7 @@
 Package: redisProgress
 Type: Package
-Title: Follow task progression using Redis
-Version: 0.2.0
+Title: Follow Task Progression using Redis
+Version: 0.2.1
 Author: Clément TURBELIN
 Maintainer: Clément TURBELIN <clement.turbelin@upmc.fr>
 Description: Follow tasks progression in a distributed context, using a Redis instance to exchange data about running tasks. Redis is not used as a job queue here (unlike doRedis package), only as a mean to share data about tasks progression.
@@ -19,5 +19,5 @@ Suggests:
     testthat,
     knitr,
     rmarkdown
-RoxygenNote: 6.0.1
+RoxygenNote: 6.1.1
 VignetteBuilder: knitr

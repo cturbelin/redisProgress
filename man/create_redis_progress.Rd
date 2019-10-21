@@ -4,8 +4,9 @@
 \alias{create_redis_progress}
 \title{Create redis progress bar}
 \usage{
-create_redis_progress(name, redis = NULL, publish = NULL, debug = FALSE,
-  unique.name = FALSE, append = TRUE, verbose = TRUE)
+create_redis_progress(name, redis = NULL, publish = NULL,
+  debug = FALSE, unique.name = FALSE, append = TRUE,
+  verbose = TRUE)
 }
 \arguments{
 \item{name}{character string used to create the queue name (with predefined prefix).}

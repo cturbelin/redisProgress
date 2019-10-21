@@ -2,7 +2,6 @@
 % Please edit documentation in R/00.R, R/get_option.R
 \name{get_option}
 \alias{get_option}
-\alias{get_option}
 \title{Get package options
 From 'redis.progress' options() entry}
 \usage{

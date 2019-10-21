@@ -20,7 +20,7 @@ Only needed commands by this package are implemented. It's a very simple impleme
 extra dependency, limited to this package needs
 }
 \details{
-The returned "client" holds connexion configuration and is transmissible as a variable in distributed execution
+The returned "client" embeds connexion configuration and can be propagated in distributed workers
 (like in foreach). So the client connexion parameters are only to be defined once
 
 
@@ -45,4 +45,14 @@ Accepted parameters are
  \item{database}{Redis database number}
  \item{...}{Some other parameters, not yet normalized accross interfaces}
 }
+}
+\examples{
+\dontrun{
+# Create a simple client using  rredis as backend
+client = redis_client(host="127.0.0.1", type="rredis")
+
+# Using another backend and database number 2
+client = redis_client(host="127.0.0.1", type="redux", database=2)
+}
+
 }

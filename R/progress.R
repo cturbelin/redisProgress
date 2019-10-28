@@ -8,7 +8,7 @@
 #' @param redis redis_client() results
 #' @param debug debug mode
 #'
-#' @return progress bar instance
+#' @return progress bar structure (list with function)
 #'
 #' @section progress-bar:
 #' The progress bar instance is currently a very simple object-mimic list exposing several functions
@@ -38,6 +38,7 @@
 #'
 #' @section \code{message(msg)}:
 #' Send a message
+#'
 redis_progress_bar = function(name, redis, debug=FALSE) {
     # Task name
     task = NULL
@@ -58,7 +59,7 @@ redis_progress_bar = function(name, redis, debug=FALSE) {
         cnx <<- redis$connect()
 
         if(debug) {
-            cat("Starting task ", task," into job-queue ", name,"\n")
+            message("Starting task ", task," into job-queue ", name,"\n")
         }
         redis$hashSet(name, paste0(task,":started"), as.numeric(Sys.time()))
         redis$hashSet(name, paste0(task,":steps"), as.numeric(steps))
@@ -79,7 +80,7 @@ redis_progress_bar = function(name, redis, debug=FALSE) {
 
     update = function() {
         if(debug) {
-            cat("Updating task ", task," to value ", value, "\n")
+            message("Updating task ", task," to value ", value, "\n")
         }
         # Update time of update
         redis$hashSet(name, paste0(task,":updated"), as.numeric(Sys.time()))
@@ -182,12 +183,12 @@ create_redis_progress = function(name, redis=NULL, publish=NULL, debug=FALSE, un
     name = paste0(redis_queue_name(name), unique)
 
     if(verbose) {
-        cat("Creating queue '", name,"'\n")
+        message("Creating queue '", name,"'\n")
     }
 
     progress = redis_progress_bar(name, redis, debug=debug)
     reg.finalizer(environment(progress$start), function(env) {
-        cat("Closing ", env$redis$name(),"\n")
+        message("Closing ", env$redis$name(),"\n")
     }, onexit=TRUE)
 
     if( !is.null(publish) ) {
@@ -203,7 +204,7 @@ create_redis_progress = function(name, redis=NULL, publish=NULL, debug=FALSE, un
             redis$pushTail(publish, name)
         }
         if(debug) {
-            cat("Setting queue ", name, " into ", publish, " key")
+            message("Setting queue ", name, " into ", publish, " key")
         }
     }
 

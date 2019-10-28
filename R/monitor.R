@@ -1,6 +1,7 @@
 #' Monitor Progress of a tasks queue
 #'
-#' Basic monitoring of task queue progress created using
+#' This function provide a minimal console based interface to follow the task progression in a task queue
+#' One 'queue' can follows an abritrary number of tasks run in parallel.
 #'
 #' @param from source of the queue to monitor, simplest is the queue name (without the queue prefix)
 #' @param redis redis client definintion object, returned by \code{redis_client()}
@@ -17,7 +18,6 @@
 #' \item{sleep}{number of seconds to sleep between update}
 #' \item{log.size}{number of log messages to show (only lasts)}
 #' }
-#'
 #'
 #' @section from Parameter:
 #' from parameter can be either a single charater value,
@@ -48,12 +48,12 @@ redis_progress_monitor = function(from, redis=NULL, options=list(), debug=TRUE) 
     }
 
     if(debug) {
-        cat("Connecting")
+        message("Connecting")
     }
     redis$connect()
     if( !is.null(redis$cnx) ) {
         if(debug) {
-            cat(" Connected\n")
+            message(" Connected\n")
         }
     }
 
@@ -91,7 +91,7 @@ redis_progress_monitor = function(from, redis=NULL, options=list(), debug=TRUE) 
         paste0(sprintf("%3d",elapsed), "s")
     }
 
-    format_task = function(name, value, steps, started) {
+   format_task = function(name, value, steps, started) {
         prop = NULL # Completion proportion
         if(steps > 0) {
             format = "% 2.1f%%"
@@ -105,7 +105,7 @@ redis_progress_monitor = function(from, redis=NULL, options=list(), debug=TRUE) 
 
         if(!is.null(prop) && options$use.bar) {
             nbars = floor(prop * options$bar.size)
-            b = paste0(" |", str_rep("=", nbars), str_rep(" ", options$bar.size - nbars),"| ")
+            b = paste0(" |", paste0(rep.int("=", nbars), collapse = ""), paste0(rep.int(" ",  options$bar.size - nbars), collapse = ""),"| ")
         } else {
             b = ""
         }
@@ -136,19 +136,19 @@ redis_progress_monitor = function(from, redis=NULL, options=list(), debug=TRUE) 
 
             name = queues[queue.index]
             if(debug) {
-                cat("Queue : ", name,"\n")
+                message("Queue : ", name,"\n")
             }
 
             # Get all data
             h = redis$hashGetAll(name)
 
             if(is.null(h)) {
-                cat("Unable to get hash", name," waiting...\n")
+                warning("Unable to get hash", name," waiting...\n")
                 Sys.sleep(5)
                 next()
             } else {
                 if(debug) {
-                    cat("Hash ", length(h), "fields\n")
+                    message("Hash ", length(h), "fields\n")
                 }
             }
 
@@ -194,6 +194,7 @@ redis_progress_monitor = function(from, redis=NULL, options=list(), debug=TRUE) 
 
 }
 
+#' Internal function to clear the console
 #' @noRd
 clear_console = function() {
     default_cls = function() { cat("\014") }

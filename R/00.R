@@ -3,8 +3,8 @@
 #' From 'redis.progress' options() entry
 #' @param name option name to get, if null returns all options
 #' @return option value
-#' @noRd
 #' Internal function
+#' @noRd
 get_option = function(name=NULL) {
     o = base::getOption("redisProgress")
     if(is.null(name)) {

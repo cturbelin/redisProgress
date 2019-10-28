@@ -1,7 +1,12 @@
+
 #' Get package options
 #' From 'redis.progress' options() entry
+#' @param name option name to get, if null returns all options
+#' @return option value
+#' @noRd
+#' Internal function
 get_option = function(name=NULL) {
-    o = getOption("redisProgress")
+    o = base::getOption("redisProgress")
     if(is.null(name)) {
         o
     } else {

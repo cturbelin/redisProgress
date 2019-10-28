@@ -2,13 +2,16 @@
 % Please edit documentation in R/utils.R
 \name{redis_queue_name}
 \alias{redis_queue_name}
-\title{Get the full name of the queue including current queue's prefix}
+\title{Get the full name of the queue including current queue's prefix in the redis server}
 \usage{
 redis_queue_name(name)
 }
 \arguments{
 \item{name}{name of the queue (without prefix)}
 }
+\value{
+queue name with the configured prefix
+}
 \description{
-Get the full name of the queue including current queue's prefix
+Queue are stored using a common prefix in the redis key
 }

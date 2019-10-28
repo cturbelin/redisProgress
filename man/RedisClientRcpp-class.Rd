@@ -4,10 +4,22 @@
 \name{RedisClientRcpp-class}
 \alias{RedisClientRcpp-class}
 \alias{RedisClientRcpp}
-\title{Client interface for RcppRedis library}
+\title{Client interface for RcppRedis library
+Internal class}
 \description{
 Client interface for RcppRedis library
+Internal class
 }
+\section{Fields}{
+
+\describe{
+\item{\code{args}}{arguments to use to connect to the redis database}
+
+\item{\code{cnx}}{connexion instance return by the backend}
+
+\item{\code{database}}{database number to connect to}
+}}
+
 \section{Methods}{
 
 \describe{
@@ -16,7 +28,7 @@ Client interface for RcppRedis library
 \item{\code{delete(key)}}{Delete key}
 
 \item{\code{exists(key)}}{Key exists
-@returns boolean}
+@return boolean}
 
 \item{\code{get(key)}}{Get key value}
 
@@ -33,3 +45,6 @@ Client interface for RcppRedis library
 \item{\code{set(key, value)}}{Set key value}
 }}
 
+\seealso{
+\link{redis_client}
+}

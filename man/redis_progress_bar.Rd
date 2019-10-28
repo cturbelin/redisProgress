@@ -14,7 +14,7 @@ redis_progress_bar(name, redis, debug = FALSE)
 \item{debug}{debug mode}
 }
 \value{
-progress bar instance
+progress bar structure (list with function)
 }
 \description{
 Holds the environment containing progress bar data
@@ -55,6 +55,7 @@ Define the current task step to be newvalue
 \section{\code{message(msg)}}{
 
 Send a message
+
 get the queue name
 get the value
 }

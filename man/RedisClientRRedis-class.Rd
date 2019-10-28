@@ -4,8 +4,26 @@
 \name{RedisClientRRedis-class}
 \alias{RedisClientRRedis-class}
 \alias{RedisClientRRedis}
-\title{Client interface for rredis library}
+\title{Client interface for rredis library
+Internal class.}
 \description{
 Client interface for rredis library
+Internal class.
 }
+\section{Methods}{
 
+\describe{
+\item{\code{connect()}}{connect to the redis database}
+
+\item{\code{hashGet(key, field)}}{Get the value of a field in a HSet}
+
+\item{\code{hashSet(key, field, value)}}{set the field in a HSet with a value}
+
+\item{\code{initialize(host = "localhost", port = 6379, database = NA, ...)}}{initialize the instance with connexion parameters}
+
+\item{\code{name()}}{get the instance name}
+}}
+
+\seealso{
+\link{redis_client}
+}

@@ -9,7 +9,10 @@ redis_cleanup_progress(name, redis = NULL)
 \arguments{
 \item{name}{name of the queue}
 
-\item{redis}{redis client object \code{redis_client}}
+\item{redis}{redis client object \code{\link{redis_client}}}
+}
+\value{
+vector of deleted keys as name and deletion result as value
 }
 \description{
 Cleanup all job queues with the given name

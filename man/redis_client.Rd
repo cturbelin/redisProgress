@@ -12,17 +12,20 @@ redis_client(type = NULL, ...)
 \item{...}{paramerters to transmit to the client implementation (host, port, ...)}
 }
 \value{
-environment
+instance of a RedisClient class (described in details section)
 }
 \description{
+This functions return an object embedding Redis connection parameters. It can be propagated accross all workers to share the same
+connect to the same redis database.
+}
+\details{
+RedisClient:
 Returns an instance of RedisClient* class with methods allowing to manipulate redis database using a unified interface
 Only needed commands by this package are implemented. It's a very simple implementation to avoid
 extra dependency, limited to this package needs
-}
-\details{
+
 The returned "client" embeds connexion configuration and can be propagated in distributed workers
 (like in foreach). So the client connexion parameters are only to be defined once
-
 
 
 The returned instance exposes the following functions :
@@ -47,12 +50,10 @@ Accepted parameters are
 }
 }
 \examples{
-\dontrun{
 # Create a simple client using  rredis as backend
 client = redis_client(host="127.0.0.1", type="rredis")
 
 # Using another backend and database number 2
 client = redis_client(host="127.0.0.1", type="redux", database=2)
-}
 
 }

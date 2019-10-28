@@ -17,7 +17,8 @@ redis_progress_monitor(from, redis = NULL, options = list(),
 \item{debug}{show verbose information message if TRUE (for dev)}
 }
 \description{
-Basic monitoring of task queue progress created using
+This function provide a minimal console based interface to follow the task progression in a task queue
+One 'queue' can follows an abritrary number of tasks run in parallel.
 }
 \section{Options}{
 

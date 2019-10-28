@@ -8,6 +8,12 @@
 \description{
 Client interface for redux & rrlite library
 }
+\section{Fields}{
+
+\describe{
+\item{\code{type}}{type of library to use  redux or rrlite (default is redux)}
+}}
+
 \section{Methods}{
 
 \describe{
@@ -16,3 +22,6 @@ Client interface for redux & rrlite library
 \item{\code{hashSetCounter(key, field, value)}}{Set counter [field] of hash named by [key]}
 }}
 
+\seealso{
+\link{redis_client}
+}

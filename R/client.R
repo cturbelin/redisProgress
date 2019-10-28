@@ -5,6 +5,8 @@
 # Use a very simple implementation to reduce dependencies
 
 #' Client interface for rredis library
+#' Internal class.
+#' @seealso \link{redis_client}
 RedisClientRRedis = setRefClass("RedisClientRRedis",
     fields = list(
         "args"="list",
@@ -13,6 +15,7 @@ RedisClientRRedis = setRefClass("RedisClientRRedis",
     ),
     methods = list(
         initialize = function(host="localhost", port=6379, database=NA, ...) {
+            "initialize the instance with connexion parameters"
             a = list(...)
             a$host = host
             a$port = port
@@ -22,6 +25,7 @@ RedisClientRRedis = setRefClass("RedisClientRRedis",
         },
 
         name = function() {
+            "get the instance name"
           n = paste0(args$host,":",args$port)
           if( !is.na(database) ) {
               n = paste0(n, "/", database)
@@ -30,6 +34,7 @@ RedisClientRRedis = setRefClass("RedisClientRRedis",
         },
 
         connect = function() {
+            "connect to the redis database"
             require(rredis)
             aa = args
             aa$returnRef = TRUE
@@ -41,6 +46,7 @@ RedisClientRRedis = setRefClass("RedisClientRRedis",
         },
 
         hashSet = function(key, field, value) {
+            "set the field in a HSet with a value"
             rredis::redisHSet(key = key, field=field, value=value, NX=FALSE)
             # rredis HSet returns "0" whatever success or not
             return(TRUE)
@@ -53,6 +59,7 @@ RedisClientRRedis = setRefClass("RedisClientRRedis",
         },
 
         hashGet = function(key, field) {
+            "Get the value of a field in a HSet"
             rredis::redisHGet(key, field)
         },
 
@@ -114,6 +121,11 @@ RedisClientRRedis = setRefClass("RedisClientRRedis",
 
 
 #' Client interface for RcppRedis library
+#' Internal class
+#' @field args arguments to use to connect to the redis database
+#' @field cnx connexion instance return by the backend
+#' @field database database number to connect to
+#' @seealso \link{redis_client}
 RedisClientRcpp = setRefClass("RedisClientRcpp",
     fields = list(
         args="list",
@@ -185,7 +197,7 @@ RedisClientRcpp = setRefClass("RedisClientRcpp",
 
         exists = function(key) {
             "Key exists
-            @returns boolean
+            @return boolean
             "
             cnx$exists(key) != 0
         },
@@ -237,6 +249,8 @@ RedisClientRcpp = setRefClass("RedisClientRcpp",
 )
 
 #' Client interface for redux & rrlite library
+#' @field type type of library to use  redux or rrlite (default is redux)
+#' @seealso \link{redis_client}
 RedisClientRedux = setRefClass("RedisClientRedux",
   fields = list(
       args="list",
@@ -347,6 +361,10 @@ RedisClientRedux = setRefClass("RedisClientRedux",
 
 #' Create a redis client
 #'
+#' This functions return an object embedding Redis connection parameters. It can be propagated accross all workers to share the same
+#' connect to the same redis database.
+#'
+#' @details RedisClient:
 #' Returns an instance of RedisClient* class with methods allowing to manipulate redis database using a unified interface
 #' Only needed commands by this package are implemented. It's a very simple implementation to avoid
 #' extra dependency, limited to this package needs
@@ -354,7 +372,6 @@ RedisClientRedux = setRefClass("RedisClientRedux",
 #' The returned "client" embeds connexion configuration and can be propagated in distributed workers
 #' (like in foreach). So the client connexion parameters are only to be defined once
 #'
-#' @details
 #'
 #' The returned instance exposes the following functions :
 #' \describe{
@@ -379,16 +396,14 @@ RedisClientRedux = setRefClass("RedisClientRedux",
 #'
 #' @param type type of client to use (rredis, rcpp for RcppRedis)
 #' @param ... paramerters to transmit to the client implementation (host, port, ...)
-#' @return environment
+#' @return instance of a RedisClient class (described in details section)
 #'
 #' @examples
-#' \dontrun{
 #' # Create a simple client using  rredis as backend
 #' client = redis_client(host="127.0.0.1", type="rredis")
 #'
 #' # Using another backend and database number 2
 #' client = redis_client(host="127.0.0.1", type="redux", database=2)
-#' }
 #'
 #' @export
 redis_client = function(type=NULL, ...) {

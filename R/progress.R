@@ -59,7 +59,7 @@ redis_progress_bar = function(name, redis, debug=FALSE) {
         cnx <<- redis$connect()
 
         if(debug) {
-            message("Starting task ", task," into job-queue ", name,"\n")
+            message(paste("Starting task", sQuote(task)," into job-queue ", sQuote(name)))
         }
         redis$hashSet(name, paste0(task,":started"), as.numeric(Sys.time()))
         redis$hashSet(name, paste0(task,":steps"), as.numeric(steps))
@@ -80,7 +80,7 @@ redis_progress_bar = function(name, redis, debug=FALSE) {
 
     update = function() {
         if(debug) {
-            message("Updating task ", task," to value ", value)
+            message(paste("Updating task", task,"to value ", value))
         }
         # Update time of update
         redis$hashSet(name, paste0(task,":updated"), as.numeric(Sys.time()))
@@ -120,7 +120,7 @@ redis_progress_bar = function(name, redis, debug=FALSE) {
             value
         },
         debug = function() {
-            as.list(environment())
+            as.list(environment(step_task))
         }
 
     ), class="redis_progress")
@@ -183,7 +183,7 @@ create_redis_progress = function(name, redis=NULL, publish=NULL, debug=FALSE, un
     name = paste0(redis_queue_name(name), unique)
 
     if(verbose) {
-        message("Creating queue '", sQuote(name))
+        message(paste("Creating queue", sQuote(name)))
     }
 
     progress = redis_progress_bar(name, redis, debug=debug)
@@ -204,7 +204,7 @@ create_redis_progress = function(name, redis=NULL, publish=NULL, debug=FALSE, un
             redis$pushTail(publish, name)
         }
         if(debug) {
-            message("Setting queue ", name, " into ", publish, " key")
+            message(paste("Setting queue ", sQuote(name), " into ", publish, " key"))
         }
     }
 

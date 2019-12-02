@@ -47,4 +47,11 @@ Internal class
 
 \seealso{
 \link{redis_client}
+
+Other backend: 
+\code{\link{RedisClientMock-class}},
+\code{\link{RedisClientRRedis-class}},
+\code{\link{RedisClientRedux-class}},
+\code{\link{redis_client}()}
 }
+\concept{backend}

@@ -34,7 +34,8 @@ The returned instance exposes the following functions :
 \item{get(key)}{get key value}
 \item{hashGet(key, field)}{get field value in HashSet named by key}
 \item{hashSet(key, field, value)}{set field value in HashSet named by key}
-\item{hashSetCounter(key, field, value)}{set field value for a counter in HashSet named by key}
+\item{hashSetCounter(key, field, value)}{set field value for a counter in HashSet named by `key`}
+\item{hashIncrBy(key, field, by)}{Increment a field by the amount provided in `by`. Caution the field must have been initialized by hashSetCounter not by hashSet }
 \item{delete(key)}{remove the key key value}
 \item{exists(key)}{returns TRUE the key exists}
 \item{pushTail(key, value)}{add a value on the tail of the list named by key}
@@ -55,5 +56,27 @@ client = redis_client(host="127.0.0.1", type="rredis")
 
 # Using another backend and database number 2
 client = redis_client(host="127.0.0.1", type="redux", database=2)
+\dontrun{
+client$connect() # Initiate connexion
+}
+
+client = redis_client("mock") # Mock client (in-memory only client)
+
+client$connect()
+
+client$exists("my-key") # Test if 'my-key' exists
+client$set("my-key", 12) # Set a value
+client$get("my-key")
+
+client$hashSetCounter("a-key", "counter", 1) # Set a counter value in a hash field
+client$hashIncrBy("a-key", "counter", 1) # Increment by 1
 
 }
+\seealso{
+Other backend: 
+\code{\link{RedisClientMock-class}},
+\code{\link{RedisClientRRedis-class}},
+\code{\link{RedisClientRcpp-class}},
+\code{\link{RedisClientRedux-class}}
+}
+\concept{backend}

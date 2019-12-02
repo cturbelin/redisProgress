@@ -6,7 +6,8 @@
 
 #' Client interface for rredis library
 #' Internal class.
-#' @seealso \link{redis_client}
+#' @family backend
+#' @seealso \code{\link{redis_client}}
 RedisClientRRedis = setRefClass("RedisClientRRedis",
     fields = list(
         "args"="list",
@@ -64,6 +65,7 @@ RedisClientRRedis = setRefClass("RedisClientRRedis",
         },
 
         hashGetAll = function(key) {
+          "Get all fields of an HSet"
             rredis::redisHGetAll(key)
         },
 
@@ -125,6 +127,7 @@ RedisClientRRedis = setRefClass("RedisClientRRedis",
 #' @field args arguments to use to connect to the redis database
 #' @field cnx connexion instance return by the backend
 #' @field database database number to connect to
+#' @family backend
 #' @seealso \link{redis_client}
 RedisClientRcpp = setRefClass("RedisClientRcpp",
     fields = list(
@@ -177,12 +180,17 @@ RedisClientRcpp = setRefClass("RedisClientRcpp",
 
         hashSetCounter = function(key, field, value) {
             "Set [field] of hash named by [key]"
-            cnx$hset(key, field, value) > 0
+            cnx$hset(key, field, as.integer(value)) > 0
         },
 
         hashIncrBy = function(key, field, value) {
-          "increment [field] in [key] hash  "
-            cnx$hincrby(key, field, value)
+          "increment [field] in [key] hash"
+          old = hashGet(key, field)
+          if(is.null(old)) {
+            old = 0
+          }
+          old = old + value
+          cnx$hset(key, field, value)
         },
 
         hashGet = function(key, field) {
@@ -250,6 +258,7 @@ RedisClientRcpp = setRefClass("RedisClientRcpp",
 
 #' Client interface for redux & rrlite library
 #' @field type type of library to use  redux or rrlite (default is redux)
+#' @family backend
 #' @seealso \link{redis_client}
 RedisClientRedux = setRefClass("RedisClientRedux",
   fields = list(
@@ -267,6 +276,7 @@ RedisClientRedux = setRefClass("RedisClientRedux",
               database <<- as.integer(database)
               type <<- .type
         },
+
         name = function() {
             n = paste0(args$host,":",args$port)
             if( !is.na(database) ) {
@@ -291,16 +301,18 @@ RedisClientRedux = setRefClass("RedisClientRedux",
             cnx
         },
         hashSet = function(key, field, value) {
-            cnx$HSET(key, field, value) == "OK"
+          cnx$HSET(key, field, redux::object_to_bin(value))
+          TRUE # Returns number of modified field. error if something wrong
         },
 
         hashSetCounter = function(key, field, value) {
             "Set counter [field] of hash named by [key]"
-            cnx$HSET(key, field, value) > 0
+            cnx$HSET(key, field, value)
+            TRUE
         },
 
-        hashGet = function(key, field=NULL) {
-            cnx$HGET(key, field)
+        hashGet = function(key, field) {
+          redux::bin_to_object(cnx$HGET(key, field))
         },
 
         hashIncrBy = function(key, field, value) {
@@ -309,7 +321,20 @@ RedisClientRedux = setRefClass("RedisClientRedux",
         },
 
         hashGetAll = function(key) {
-            cnx$HGETALL(key)
+            ff = cnx$HGETALL(key)
+            if(length(ff) == 0) {
+              return(list())
+            }
+            nn = ff[seq(1, length(ff), by=2)]
+            values = ff[seq(2, length(ff), by=2)]
+            values = lapply(values, function(x) {
+              if(is.raw(x)) {
+                x = redux::bin_to_object(x)
+              }
+              x
+            })
+            names(values) <- nn
+            values
         },
 
         delete = function(key) {
@@ -338,11 +363,11 @@ RedisClientRedux = setRefClass("RedisClientRedux",
             unlist(cnx$LRANGE(key, start=start, end=len - 1))
         },
         set = function(key, value) {
-            cnx$SET(key, value) > 0
+            cnx$SET(key, redux::object_to_bin(value)) > 0
         },
 
         get = function(key) {
-            cnx$GET(key)
+          redux::bin_to_object(cnx$GET(key))
         },
 
         keys = function(pattern="*") {
@@ -358,6 +383,113 @@ RedisClientRedux = setRefClass("RedisClientRedux",
         }
   )
 )
+
+#' Client interface for mocking Redis Database
+#' @field data environment where data are stored
+#' @family backend
+#' @seealso \link{redis_client}
+RedisClientMock = setRefClass("RedisClientMock",
+ fields = list(
+   data="ANY"
+ ),
+ methods = list(
+   initialize = function(...) {
+      data <<- new.env(parent = emptyenv())
+   },
+   name = function() {
+     "mock"
+   },
+   connect = function() {
+     TRUE
+   },
+   hashSet = function(key, field, value) {
+     r = base::get0(key, envir=data, ifnotfound=list())
+     if(!is.list(r)) {
+       stop(paste0("Entry", sQuote(key)," is not a hash"))
+     }
+     r[[field]] <- value
+     base::assign(key, r, envir=data)
+     return(TRUE)
+   },
+
+   hashSetCounter = function(key, field, value) {
+     "Set counter [field] of hash named by [key]"
+     hashSet(key, field, value)
+   },
+
+   hashGet = function(key, field) {
+     r = base::get0(key, envir=data, ifnotfound=NULL)
+     if(is.null(r)) {
+       return(NULL)
+     }
+     return(r[[field]])
+   },
+
+   hashIncrBy = function(key, field, value) {
+     "increment [field] in [key] hash  "
+     v = hashGet(key, field)
+     if(!is.null(v)) {
+       v = 0
+     }
+     hashSet(key, field, v)
+   },
+
+   hashGetAll = function(key) {
+     base::get0(key, envir=data, ifnotfound=list())
+   },
+
+   delete = function(key) {
+     if(base::exists(key, envir = data)) {
+        rm(list=key, envir=data)
+     }
+     TRUE # Returns number of delete key
+   },
+
+   exists = function(key) {
+     base::exists(key, envir=data)
+   },
+
+   pushTail = function(key, value) {
+     r = base::get0(key, envir=data, ifnotfound = list())
+     r[[length(r) + 1]] = value
+     base::assign(key, r, envir=data)
+   },
+
+   getTail = function(key, size, start=NULL) {
+     r = base::get0(key, envir=data, ifnotfound = list())
+     len = length(r)
+     if(len == 0L) {
+       return(c())
+     }
+     if(size > len) {
+       size = len
+     }
+     if( is.null(start) ) {
+       start = max(0, len - size)
+     }
+     unlist(r[start:(len)])
+   },
+   set = function(key, value) {
+     base::assign(key, value, envir=data)
+     TRUE
+   },
+
+   get = function(key) {
+    base::get0(key, envir=data, ifnotfound = NULL)
+   },
+
+   keys = function(pattern="*") {
+     p = glob2rx(pattern)
+     n = ls(envir=data)
+     n = n[grepl(p, n)]
+     n
+   },
+   handle = function(name=NULL) {
+     c("keys"=TRUE, "hashGetAll"=TRUE)
+   }
+ )
+)
+
 
 #' Create a redis client
 #'
@@ -379,7 +511,8 @@ RedisClientRedux = setRefClass("RedisClientRedux",
 #' \item{get(key)}{get key value}
 #' \item{hashGet(key, field)}{get field value in HashSet named by key}
 #' \item{hashSet(key, field, value)}{set field value in HashSet named by key}
-#' \item{hashSetCounter(key, field, value)}{set field value for a counter in HashSet named by key}
+#' \item{hashSetCounter(key, field, value)}{set field value for a counter in HashSet named by `key`}
+#' \item{hashIncrBy(key, field, by)}{Increment a field by the amount provided in `by`. Caution the field must have been initialized by hashSetCounter not by hashSet }
 #' \item{delete(key)}{remove the key key value}
 #' \item{exists(key)}{returns TRUE the key exists}
 #' \item{pushTail(key, value)}{add a value on the tail of the list named by key}
@@ -404,6 +537,22 @@ RedisClientRedux = setRefClass("RedisClientRedux",
 #'
 #' # Using another backend and database number 2
 #' client = redis_client(host="127.0.0.1", type="redux", database=2)
+#' \dontrun{
+#' client$connect() # Initiate connexion
+#' }
+#'
+#' client = redis_client("mock") # Mock client (in-memory only client)
+#'
+#' client$connect()
+#'
+#' client$exists("my-key") # Test if 'my-key' exists
+#' client$set("my-key", 12) # Set a value
+#' client$get("my-key")
+#'
+#' client$hashSetCounter("a-key", "counter", 1) # Set a counter value in a hash field
+#' client$hashIncrBy("a-key", "counter", 1) # Increment by 1
+#'
+#' @family backend
 #'
 #' @export
 redis_client = function(type=NULL, ...) {
@@ -414,6 +563,7 @@ redis_client = function(type=NULL, ...) {
         "rredis"= RedisClientRRedis,
         "rcpp"=RedisClientRcpp,
         "redux"=RedisClientRedux,
+        "mock"=RedisClientMock,
         stop(paste("Unknown client type '",type,"'"))
     )
     client = engine$new(...)

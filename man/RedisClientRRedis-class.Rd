@@ -17,6 +17,8 @@ Internal class.
 
 \item{\code{hashGet(key, field)}}{Get the value of a field in a HSet}
 
+\item{\code{hashGetAll(key)}}{Get all fields of an HSet}
+
 \item{\code{hashSet(key, field, value)}}{set the field in a HSet with a value}
 
 \item{\code{initialize(host = "localhost", port = 6379, database = NA, ...)}}{initialize the instance with connexion parameters}
@@ -25,5 +27,12 @@ Internal class.
 }}
 
 \seealso{
-\link{redis_client}
+\code{\link{redis_client}}
+
+Other backend: 
+\code{\link{RedisClientMock-class}},
+\code{\link{RedisClientRcpp-class}},
+\code{\link{RedisClientRedux-class}},
+\code{\link{redis_client}()}
 }
+\concept{backend}

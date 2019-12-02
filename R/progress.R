@@ -68,8 +68,8 @@ redis_progress_bar = function(name, redis, debug=FALSE) {
     }
 
     step_task = function(newvalue) {
+        redis$hashSetCounter(name, task, value)
         value <<- newvalue
-        redis$hashSet(name, task, value)
         update()
     }
 
@@ -118,6 +118,9 @@ redis_progress_bar = function(name, redis, debug=FALSE) {
         #' get the value
         value = function() {
             value
+        },
+        log_name = function() {
+            log.name
         },
         debug = function() {
             as.list(environment(step_task))

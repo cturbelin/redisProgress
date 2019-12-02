@@ -190,7 +190,8 @@ RedisClientRcpp = setRefClass("RedisClientRcpp",
             old = 0
           }
           old = old + value
-          cnx$hset(key, field, value)
+          cnx$hset(key, field, old)
+          old
         },
 
         hashGet = function(key, field) {
@@ -312,7 +313,11 @@ RedisClientRedux = setRefClass("RedisClientRedux",
         },
 
         hashGet = function(key, field) {
-          redux::bin_to_object(cnx$HGET(key, field))
+          v = cnx$HGET(key, field)
+          if(is.raw(v)) {
+            v =redux::bin_to_object(v)
+          }
+          v
         },
 
         hashIncrBy = function(key, field, value) {
@@ -367,7 +372,11 @@ RedisClientRedux = setRefClass("RedisClientRedux",
         },
 
         get = function(key) {
-          redux::bin_to_object(cnx$GET(key))
+          v = cnx$GET(key)
+          if(is.raw(v)) {
+            v = redux::bin_to_object(v)
+          }
+          v
         },
 
         keys = function(pattern="*") {
@@ -428,10 +437,12 @@ RedisClientMock = setRefClass("RedisClientMock",
    hashIncrBy = function(key, field, value) {
      "increment [field] in [key] hash  "
      v = hashGet(key, field)
-     if(!is.null(v)) {
+     if(is.null(v)) {
        v = 0
      }
+     v = v + value
      hashSet(key, field, v)
+     v
    },
 
    hashGetAll = function(key) {

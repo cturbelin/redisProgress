@@ -95,6 +95,13 @@ for(client_type in names(clients)) {
         client$hashSetCounter(key, "counter", 23L)
         client$hashIncrBy(key, "counter", 1)
 
+        v = client$hashGet(key, "counter")
+        if(client_type == "redux") {
+            v = as.integer(v) # Redux cast to string
+        }
+
+        expect_equal(v, 24L)
+
     })
 
 }

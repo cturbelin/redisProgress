@@ -80,7 +80,7 @@ redis_progress_bar = function(name, redis, debug=FALSE) {
 
     update = function() {
         if(debug) {
-            message("Updating task ", task," to value ", value, "\n")
+            message("Updating task ", task," to value ", value)
         }
         # Update time of update
         redis$hashSet(name, paste0(task,":updated"), as.numeric(Sys.time()))
@@ -183,12 +183,12 @@ create_redis_progress = function(name, redis=NULL, publish=NULL, debug=FALSE, un
     name = paste0(redis_queue_name(name), unique)
 
     if(verbose) {
-        message("Creating queue '", name,"'\n")
+        message("Creating queue '", sQuote(name))
     }
 
     progress = redis_progress_bar(name, redis, debug=debug)
     reg.finalizer(environment(progress$start), function(env) {
-        message("Closing ", env$redis$name(),"\n")
+        message("Closing ", env$redis$name())
     }, onexit=TRUE)
 
     if( !is.null(publish) ) {

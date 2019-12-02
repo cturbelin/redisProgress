@@ -365,7 +365,7 @@ RedisClientRedux = setRefClass("RedisClientRedux",
             if( is.null(start) ) {
                 start = max(0, len - size)
             }
-            unlist(cnx$LRANGE(key, start=start, end=len - 1))
+            unlist(cnx$LRANGE(key, start=start, stop=len - 1))
         },
         set = function(key, value) {
             cnx$SET(key, redux::object_to_bin(value)) > 0

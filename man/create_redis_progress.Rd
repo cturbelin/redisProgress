@@ -19,7 +19,7 @@ create_redis_progress(
 
 \item{redis}{redis_client object used to hold connection parameters}
 
-\item{publish}{name of a redis key to use to publish the generated queue name (caution, no namespace)}
+\item{publish}{how to publish the generated key name, name of key or value returned by \code{\link{publish_queue}()}}
 
 \item{debug}{print debug information}
 
@@ -34,13 +34,8 @@ Create redis progress bar
 }
 \section{publish}{
 
-Publish argument allows to set the current queue name into another redis entry.
-publish should be the key name to use.
-If the passed value has an attribute "type" it is used to determine the type of operation to do with the key
-\describe{
- \item{key}{uses SET operation}
- \item{list}{uses LPUSH so the queue name will be pushed to the tail of the list named by the provided key}
-}
+Publish argument allows to set the current queue name into another redis entry. Use \code{\link{publish_queue}()}
+to configure it.
 }
 
 \section{queue name}{
@@ -74,4 +69,7 @@ progress$incr()
 # Log Message can also be sent
 progress$message("My task is running well")
 progress$incr(3) # Increase the progress counter by a value
+
+# Create a progress with a random name and publish under in "myjobs" key
+progress = create_redis_progress("queue01", redis=client, publish=publish_queue("myjobs"), unique.name=TRUE)
 }

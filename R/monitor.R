@@ -67,12 +67,11 @@ redis_progress_monitor = function(from, redis=NULL, options=list(), debug=TRUE) 
             queues = redis_queue_name(from$name)
         }
         if( !is.null(from$key) ) {
-            queues = redis$get(from$key)
+            queues = redis_queue_name(redis$get(from$key))
             if(is.null(queues)) {
                 stop(paste("Unable to find queue name using key", from$key))
             }
         }
-
     }
 
     # Compute elapsed string

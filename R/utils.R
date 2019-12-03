@@ -17,6 +17,36 @@ redis_queue_name = function(name) {
     paste0(prefix, name)
 }
 
+#' Defined a way to publish a queue name
+#'
+#' In some context you need to create a random queue name to make it unique. By doing this you dont know
+#' the real queue name before to run the script.
+#' The publish feature allows to store this queue name once it's created under a predefined key name.
+#'
+#' This function should be used to set the `publish` parameter of \code{\link{}}
+#'
+#' @param name key name to use to publish last generated queue name
+#' @param type type of storage to use (see details)
+#' @param prefix use queue prefix to the key (by default false)
+#' @details
+#' Using 'key' as type will only store the last created, 'list' will store it in a list as the last element
+#'
+#' @export
+#'
+#' @examples
+#'
+#' publish_queue('my-jobs', 'list') # Store task queue names in a list under the 'my-jobs' names
+#'
+publish_queue = function(name, type=c('key','list'), prefix=FALSE) {
+    type = match.arg(type)
+    attr(name, "type") <- type
+    if(prefix) {
+        name = redis_queue_name(name)
+    }
+    name
+}
+
+
 #' Cleanup all job queues with the given name
 #' @export
 #' @param name name of the queue

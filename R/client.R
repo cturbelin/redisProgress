@@ -6,6 +6,7 @@
 
 #' Client interface for rredis library
 #' Internal class.
+#' @keywords internal
 #' @family backend
 #' @seealso \code{\link{redis_client}}
 RedisClientRRedis = setRefClass("RedisClientRRedis",
@@ -110,6 +111,11 @@ RedisClientRRedis = setRefClass("RedisClientRRedis",
         keys = function(pattern="*") {
             rredis::redisKeys(pattern)
         },
+
+        type = function(name) {
+          rredis::redisType(name)
+        },
+
         handle = function(name=NULL) {
             cap = c("keys"=TRUE, "hashGetAll"=TRUE, "stringCounter"=TRUE)
             if( is.null(name) ) {
@@ -127,6 +133,7 @@ RedisClientRRedis = setRefClass("RedisClientRRedis",
 #' @field args arguments to use to connect to the redis database
 #' @field cnx connection instance return by the backend
 #' @field database database number to connect to
+#' @keywords internal
 #' @family backend
 #' @seealso \link{redis_client}
 RedisClientRcpp = setRefClass("RedisClientRcpp",
@@ -240,6 +247,9 @@ RedisClientRcpp = setRefClass("RedisClientRcpp",
             cnx$get(key)
         },
 
+        type = function(name) {
+          cnx$exec(paste0("TYPE ",name))
+        },
         keys = function(pattern="*") {
             unlist(cnx$exec(paste0("KEYS ", pattern)))
         },
@@ -259,6 +269,7 @@ RedisClientRcpp = setRefClass("RedisClientRcpp",
 
 #' Client interface for redux & rrlite library
 #' @field type type of library to use  redux or rrlite (default is redux)
+#' @keywords internal
 #' @family backend
 #' @seealso \link{redis_client}
 RedisClientRedux = setRefClass("RedisClientRedux",
@@ -266,7 +277,7 @@ RedisClientRedux = setRefClass("RedisClientRedux",
       args="list",
       cnx="ANY",
       database="integer",
-      type="character"
+      backend="character"
   ),
   methods = list(
         initialize = function(host="localhost", port=6379, database=NA, ..., .type="redux") {
@@ -275,7 +286,7 @@ RedisClientRedux = setRefClass("RedisClientRedux",
               a$port = port
               args <<- a
               database <<- as.integer(database)
-              type <<- .type
+              backend <<- .type
         },
 
         name = function() {
@@ -286,8 +297,8 @@ RedisClientRedux = setRefClass("RedisClientRedux",
             n
         },
         connect = function() {
-            require(type, character.only=TRUE)
-            api_func = switch(type,
+            require(backend, character.only=TRUE)
+            api_func = switch(backend,
                 "redux"=redux::hiredis,
                 "rrlite"=rrlite::hirlite
             )
@@ -378,7 +389,9 @@ RedisClientRedux = setRefClass("RedisClientRedux",
           }
           v
         },
-
+        type = function(name) {
+          cnx$TYPE(name)
+        },
         keys = function(pattern="*") {
             cnx$KEYS(pattern)
         },
@@ -395,6 +408,7 @@ RedisClientRedux = setRefClass("RedisClientRedux",
 
 #' Client interface for mocking Redis Database
 #' @field data environment where data are stored
+#' @keywords internal
 #' @family backend
 #' @seealso \link{redis_client}
 RedisClientMock = setRefClass("RedisClientMock",
@@ -463,6 +477,7 @@ RedisClientMock = setRefClass("RedisClientMock",
    pushTail = function(key, value) {
      r = base::get0(key, envir=data, ifnotfound = list())
      r[[length(r) + 1]] = value
+     attr(r, "redis_type") <- "list"
      base::assign(key, r, envir=data)
    },
 
@@ -487,6 +502,21 @@ RedisClientMock = setRefClass("RedisClientMock",
 
    get = function(key) {
     base::get0(key, envir=data, ifnotfound = NULL)
+   },
+
+   type = function(name) {
+     r = get(name)
+     if(is.null(r)) {
+       return("none")
+     }
+     rtype = attr(r, "redis_type")
+     if(!is.null(rtype)) {
+       return(rtype)
+     }
+     if(is.list(r)) {
+       return("hash")
+     }
+     return("string")
    },
 
    keys = function(pattern="*") {

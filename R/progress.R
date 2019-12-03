@@ -135,13 +135,8 @@ redis_progress_bar = function(name, redis, debug=FALSE) {
 #' @export
 #'
 #' @section publish:
-#' Publish argument allows to set the current queue name into another redis entry.
-#' publish should be the key name to use.
-#' If the passed value has an attribute "type" it is used to determine the type of operation to do with the key
-#' \describe{
-#'  \item{key}{uses SET operation}
-#'  \item{list}{uses LPUSH so the queue name will be pushed to the tail of the list named by the provided key}
-#' }
+#' Publish argument allows to set the current queue name into another redis entry. Use \code{\link{publish_queue}()}
+#' to configure it.
 #'
 #' @section queue name:
 #' The queue name will be used to create an Hash set structure in Redis. To avoid collision between progress bars, 2 mechanisms
@@ -159,7 +154,7 @@ redis_progress_bar = function(name, redis, debug=FALSE) {
 #'
 #' @param name character string used to create the queue name (with predefined prefix).
 #' @param redis redis_client object used to hold connection parameters
-#' @param publish name of a redis key to use to publish the generated queue name (caution, no namespace)
+#' @param publish how to publish the generated key name, name of key or value returned by \code{\link{publish_queue}()}
 #' @param debug print debug information
 #' @param unique.name ensure queue has unique name, add a random generated string (useful with publish)
 #' @param append queue name (fully qualified) already exists, it will be reused
@@ -180,6 +175,9 @@ redis_progress_bar = function(name, redis, debug=FALSE) {
 #' # Log Message can also be sent
 #' progress$message("My task is running well")
 #' progress$incr(3) # Increase the progress counter by a value
+#'
+#' # Create a progress with a random name and publish under in "myjobs" key
+#' progress = create_redis_progress("queue01", redis=client, publish=publish_queue("myjobs"), unique.name=TRUE)
 create_redis_progress = function(name, redis=NULL, publish=NULL, debug=FALSE, unique.name=FALSE, append=TRUE, verbose=TRUE) {
 
     if( is.null(redis) ) {
@@ -200,46 +198,58 @@ create_redis_progress = function(name, redis=NULL, publish=NULL, debug=FALSE, un
 
     # create queue name
     # with current prefix and uniqueness suffix if needed
-    name = paste0(redis_queue_name(name), unique)
+    queue_name = paste0(name, unique)
+
+    redis_key = redis_queue_name(queue_name)
 
     if(verbose) {
         message(paste("Creating queue", sQuote(name)))
     }
 
-    progress = redis_progress_bar(name, redis, debug=debug)
+    progress = redis_progress_bar(redis_key, redis, debug=debug)
     reg.finalizer(environment(progress$start), function(env) {
         message("Closing ", env$redis$name())
     }, onexit=TRUE)
 
     if( !is.null(publish) ) {
         type = attr(publish, "type")
+        publish_key = publish
         if( is.null(type) ) {
             type = "key"
         }
         if(type == "key") {
-            redis$set(publish, name)
+            redis$set(publish_key, queue_name)
         }
         if(type == "list") {
-            # @TODO protecting if key already exists an is not a list
-            redis$pushTail(publish, name)
+            if(redis$exists(publish_key)) {
+                found_type = redis$type(publish_key)
+                if(found_type != 'list') {
+                    stop(paste0("Publish key",sQuote(publish_key)," must be a list when exists, found ", found_type))
+                }
+            }
+            redis$pushTail(publish_key, queue_name)
         }
         if(debug) {
-            message(paste("Setting queue ", sQuote(name), " into ", publish, " key"))
+            message(paste("Setting queue ", sQuote(queue_name), " into ", publish_key, " key"))
         }
     }
 
     # If queue name is not build to be unique, check and remove previous instance of the queue if needed
     if( !unique.name ) {
-        if(!append && redis$exists(name)) {
-            redis$delete(name)
-            if(redis$exists(progress$log.name) ) {
-                redis$delete(progress$log.name)
+        if(!append && redis$exists(redis_key)) {
+            redis$delete(redis_key)
+            log.name = progress$log_name()
+            if(redis$exists(log.name) ) {
+                redis$delete(log.name)
             }
         }
     }
 
     # Initialize Hash
-    redis$hashSet(name, "_created_", as.numeric(Sys.time()))
+    redis$hashSet(redis_key, "_created_", as.numeric(Sys.time()))
 
     progress
 }
+
+
+

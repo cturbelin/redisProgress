@@ -36,3 +36,4 @@ Other backend:
 \code{\link{redis_client}()}
 }
 \concept{backend}
+\keyword{internal}

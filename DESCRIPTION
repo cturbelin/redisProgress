@@ -4,7 +4,12 @@ Title: Follow Task Progression using Redis
 Version: 0.2.2
 Author: Clément TURBELIN
 Maintainer: Clément TURBELIN <clement.turbelin@upmc.fr>
-Description: Follow tasks progress in a distributed context, using 'Redis', an open source in-memory data structure storage engine <https://redis.io> as a database to exchange data about running tasks. This package provides function to allow a set of tasks, executed in parallel (in the same or on different machines) to send information about their progress (like a progress bar). 'Redis' is not used as a job queue here (unlike 'doRedis' package), only as a mean to share data about tasks progression. A minimal console based interface is also provided to monitor those progress.
+Description: Follow tasks progress in a distributed context, using 'Redis', 
+    an open source in-memory data structure storage engine <https://redis.io> as a database to exchange data about running tasks. 
+    This package provides function to allow a set of tasks, executed in parallel (in the same or on different machines) to send
+    information about their progress (like a progress bar). 
+    'Redis' is not used as a job queue here (unlike 'doRedis' package), only as a mean to share data about tasks progression.
+    A minimal console based interface is also provided to monitor those progress.
 License: MIT + file LICENSE
 Encoding: UTF-8
 LazyData: true
@@ -16,6 +21,7 @@ Suggests:
     rredis,
     RcppRedis,
     redux,
+    shiny, 
     testthat,
     knitr,
     rmarkdown

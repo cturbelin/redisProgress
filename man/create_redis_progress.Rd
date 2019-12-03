@@ -17,7 +17,7 @@ create_redis_progress(
 \arguments{
 \item{name}{character string used to create the queue name (with predefined prefix).}
 
-\item{redis}{redis_client object used to hold connexion parameters}
+\item{redis}{redis_client object used to hold connection parameters}
 
 \item{publish}{name of a redis key to use to publish the generated queue name (caution, no namespace)}
 
@@ -59,3 +59,19 @@ are used :
 }
 }
 
+\examples{
+
+# create a redis client (using mock to make this example runnable without a redis server)
+client = redis_client("mock")
+# Create the progress bar
+progress = create_redis_progress("queue01", redis=client)
+
+progress$start('first-task', steps=5) # Start my first task, declaring 10 steps to finish
+# Do something
+progress$incr() # first step complete
+# Do something else
+progress$incr()
+# Log Message can also be sent
+progress$message("My task is running well")
+progress$incr(3) # Increase the progress counter by a value
+}

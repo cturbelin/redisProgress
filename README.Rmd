@@ -10,7 +10,7 @@ knitr::opts_chunk$set(echo = TRUE,   comment = "#>")
 
 ## Overview
 
-The goal of redisProgress is to create a progress bar system to follow tasks distributed accross several R instances (on the same host or several). It uses Redis instance to follow tasks progress.
+The goal of redisProgress is to create a progress bar system to follow tasks distributed across several R instances (on the same host or several). It uses Redis instance to follow tasks progress.
 
 Tasks are grouped in a named "queue" and can be monitored together on the same screen. 
 

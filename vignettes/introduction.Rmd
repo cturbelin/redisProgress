@@ -18,15 +18,24 @@ knitr::opts_chunk$set(
 
 ## Overview
 
-The goal of redisProgress is to create a progress bar system to follow tasks distributed accross several R instances (using foreach package for example). It uses Redis instance to follow tasks progress.
-Tasks are grouped in a common named "queue" and can be monitored together on the same screen.
+The goal of redisProgress is to create a progress bar system to follow tasks distributed across several R instances (using foreach package for example). It uses `Redis` instance, a key-value store server <https://redis.io/>,  to follow tasks progress.
+
+As it mainly designed to follow tasks in a distributed settings, this package focuses on following progress of several tasks running in parallel.
+
+Tasks are grouped in a common named *queue* and can be monitored together on the same screen using a console view. The name of the queue is your choice (in `Redis` names will be prefixed to reduce the risk of name collision with other systems.)
 
 ## Usage
 
-The package provides 2 functions :
+The package provides several functions :
  
- - `create_redis_progress()` to create a task queue, and starting one or several task to monitor in the queue
- - `redis_progress_monitor()` to follow the progress of all tasks in a queue
+ - `redis_client()` : to create a backend to connect to `Redis`, the returned object embeds connection parameters too.
+ - `create_redis_progress()` : to create a task queue, and starting one or several task to monitor in the queue.
+ - `redis_progress_monitor()` : to follow the progress of all tasks in a queue.
+ 
+Some utility functions: 
+
+ - `redis_queue_name()` : returns the real name of the queue in the `Redis` server
+ - `redis_cleanup_progress()` : remove all tasks data in a queue
 
 ### Creating tasks queue
 
@@ -83,7 +92,7 @@ job queue and on the same Redis server.
 
 In this example the parameter `unique` will create a unique queue name ensuring the queue is unique each time the program is run. The given queue name is used as a prefix the the generated unique queue name.
 
-`publish` parameter allows to keep the list of started tasks in a redis list. Once a task is started, it is published in the list. The last element of this list is the last run of this script. This is useful when you dont know the queue name (like in this example, the queue name will be generated during it's creation)
+`publish` parameter allows to keep the list of started tasks in a redis list. Once a task is started, it is published in the list. The last element of this list is the last run of this script. This is useful when you don't know the queue name (like in this example, the queue name will be generated during it's creation)
 
 ### Monitoring task progress of a queue
 
@@ -110,6 +119,7 @@ redisProgress can handle several packages implementing redis client API
 - RCppRedis
 - redux
 - rrlite (Redis without Redis)
+- mock (R only backend, used to test other functions without having a `Redis` instance running)
 
 `redis_client()` creates a client object embedding the connection context, using a unified interface, regardless the
 redis package used. The connection parameters (host, port,...) will be propagated to the R workers

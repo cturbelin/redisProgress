@@ -1,11 +1,16 @@
 # utils.R
 
-#' Get the full name of the queue including current queue's prefix in the redis server
+#' Get the real name of the queue including current queue's prefix in the `Redis` server
 #'
-#' Queue are stored using a common prefix in the redis key
+#' Queue are stored using a common prefix in the `redis` key. The prefix is defined in the options
+#' under the `queue_prefix` entry.
 #'
 #' @param name name of the queue (without prefix)
 #' @return queue name with the configured prefix
+#'
+#' @examples
+#' redis_queue_name
+#'
 #' @export
 redis_queue_name = function(name) {
     prefix = get_option("queue_prefix")

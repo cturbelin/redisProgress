@@ -21,7 +21,7 @@ Internal class.
 
 \item{\code{hashSet(key, field, value)}}{set the field in a HSet with a value}
 
-\item{\code{initialize(host = "localhost", port = 6379, database = NA, ...)}}{initialize the instance with connexion parameters}
+\item{\code{initialize(host = "localhost", port = 6379, database = NA, ...)}}{initialize the instance with connection parameters}
 
 \item{\code{name()}}{get the instance name}
 }}

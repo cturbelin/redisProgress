@@ -8,7 +8,11 @@
 \description{
 redisProgress Package
 }
+\details{
+The goal of redisProgress is to create a progress bar system to follow tasks distributed across several R instances
+(using foreach package for example). It uses `Redis` instance, a key-value store server <https://redis.io/>,  to follow progress of all the
+tasks in a queue.
+}
 \author{
 Clement Turbelin
 }
-\keyword{internal}

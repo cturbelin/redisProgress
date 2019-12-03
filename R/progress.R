@@ -20,7 +20,7 @@
 #'  \item{message}{Send a message}
 #'  \item{task}{get the task name}
 #'  \item{queue}{get the queue name}
-#'  \item{value}{get the queue name}
+#'  \item{value}{get the current step value}
 #' }
 #' Parameters of these functions (if any), are described in the following sections
 #'
@@ -131,6 +131,7 @@ redis_progress_bar = function(name, redis, debug=FALSE) {
 }
 
 #' Create redis progress bar
+#'
 #' @export
 #'
 #' @section publish:
@@ -157,12 +158,28 @@ redis_progress_bar = function(name, redis, debug=FALSE) {
 #' }
 #'
 #' @param name character string used to create the queue name (with predefined prefix).
-#' @param redis redis_client object used to hold connexion parameters
+#' @param redis redis_client object used to hold connection parameters
 #' @param publish name of a redis key to use to publish the generated queue name (caution, no namespace)
 #' @param debug print debug information
 #' @param unique.name ensure queue has unique name, add a random generated string (useful with publish)
 #' @param append queue name (fully qualified) already exists, it will be reused
 #' @param verbose show information message
+#'
+#' @examples
+#'
+#' # create a redis client (using mock to make this example runnable without a redis server)
+#' client = redis_client("mock")
+#' # Create the progress bar
+#' progress = create_redis_progress("queue01", redis=client)
+#'
+#' progress$start('first-task', steps=5) # Start my first task, declaring 10 steps to finish
+#' # Do something
+#' progress$incr() # first step complete
+#' # Do something else
+#' progress$incr()
+#' # Log Message can also be sent
+#' progress$message("My task is running well")
+#' progress$incr(3) # Increase the progress counter by a value
 create_redis_progress = function(name, redis=NULL, publish=NULL, debug=FALSE, unique.name=FALSE, append=TRUE, verbose=TRUE) {
 
     if( is.null(redis) ) {

@@ -9,28 +9,29 @@ redis_client(type = NULL, ...)
 \arguments{
 \item{type}{type of client to use (rredis, rcpp for RcppRedis)}
 
-\item{...}{paramerters to transmit to the client implementation (host, port, ...)}
+\item{...}{parameters to transmit to the client implementation (host, port, ...)}
 }
 \value{
 instance of a RedisClient class (described in details section)
 }
 \description{
-This functions return an object embedding Redis connection parameters. It can be propagated accross all workers to share the same
+This functions return an object embedding Redis connection parameters. It can be propagated across all workers to share the same
 connect to the same redis database.
 }
 \details{
 RedisClient:
-Returns an instance of RedisClient* class with methods allowing to manipulate redis database using a unified interface
-Only needed commands by this package are implemented. It's a very simple implementation to avoid
-extra dependency, limited to this package needs
+Returns an instance of `RedisClient` class with methods allowing to manipulate *Redis* database using a unified interface
 
-The returned "client" embeds connexion configuration and can be propagated in distributed workers
-(like in foreach). So the client connexion parameters are only to be defined once
+As this package only needs a subset of *Redis* commands are implemented. It's a very simple implementation to avoid
+extra dependency, limited to this package needs.
+
+The returned "client" embeds connection configuration and can be propagated in distributed workers
+(like with `foreach` package). So the client connection parameters are only to be defined once.
 
 
 The returned instance exposes the following functions :
 \describe{
-\item{connect()}{connect to preconfigured redis db}
+\item{connect()}{connect to redis db}
 \item{get(key)}{get key value}
 \item{hashGet(key, field)}{get field value in HashSet named by key}
 \item{hashSet(key, field, value)}{set field value in HashSet named by key}
@@ -39,7 +40,7 @@ The returned instance exposes the following functions :
 \item{delete(key)}{remove the key key value}
 \item{exists(key)}{returns TRUE the key exists}
 \item{pushTail(key, value)}{add a value on the tail of the list named by key}
-\item{hashGetAll(key)}{returns all fields in the HashSet named by key. If not implemented client will not be useable for monitoring}
+\item{hashGetAll(key)}{returns all fields in the HashSet named by key. If not implemented client will not be usable for monitoring}
 }
 
 Accepted parameters are
@@ -47,7 +48,7 @@ Accepted parameters are
  \item{host}{name of host}
  \item{port}{get key value}
  \item{database}{Redis database number}
- \item{...}{Some other parameters, not yet normalized accross interfaces}
+ \item{...}{Some other parameters, not yet normalized across interfaces}
 }
 }
 \examples{
@@ -57,7 +58,7 @@ client = redis_client(host="127.0.0.1", type="rredis")
 # Using another backend and database number 2
 client = redis_client(host="127.0.0.1", type="redux", database=2)
 \dontrun{
-client$connect() # Initiate connexion
+client$connect() # Initiate connection
 }
 
 client = redis_client("mock") # Mock client (in-memory only client)

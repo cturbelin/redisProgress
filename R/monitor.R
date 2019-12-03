@@ -1,12 +1,12 @@
 #' Monitor Progress of a tasks queue
 #'
-#' This function provide a minimal console based interface to follow the task progression in a task queue
-#' One 'queue' can follows an abritrary number of tasks run in parallel.
+#' This function provides a minimal console based interface to follow the progression of tasks in a queue
+#' One 'queue' can follows an arbitrary number of tasks run in parallel.
 #'
 #' @param from source of the queue to monitor, simplest is the queue name (without the queue prefix)
-#' @param redis redis client definintion object, returned by \code{redis_client()}
+#' @param redis redis client definition object, returned by \code{redis_client()}
 #' @param options list (see section options)
-#' @param debug show verbose information message if TRUE (for dev)
+#' @param debug show verbose information message if TRUE (for development)
 #' @export
 #'
 #' @section Options:
@@ -20,7 +20,7 @@
 #' }
 #'
 #' @section from Parameter:
-#' from parameter can be either a single charater value,
+#' from parameter can be either a single character value,
 #' \describe{
 #'   \item{key}{redis key where the current queue name is stored in case of publish strategy}
 #' }

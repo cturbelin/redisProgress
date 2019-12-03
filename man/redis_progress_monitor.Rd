@@ -9,15 +9,15 @@ redis_progress_monitor(from, redis = NULL, options = list(), debug = TRUE)
 \arguments{
 \item{from}{source of the queue to monitor, simplest is the queue name (without the queue prefix)}
 
-\item{redis}{redis client definintion object, returned by \code{redis_client()}}
+\item{redis}{redis client definition object, returned by \code{redis_client()}}
 
 \item{options}{list (see section options)}
 
-\item{debug}{show verbose information message if TRUE (for dev)}
+\item{debug}{show verbose information message if TRUE (for development)}
 }
 \description{
-This function provide a minimal console based interface to follow the task progression in a task queue
-One 'queue' can follows an abritrary number of tasks run in parallel.
+This function provides a minimal console based interface to follow the progression of tasks in a queue
+One 'queue' can follows an arbitrary number of tasks run in parallel.
 }
 \section{Options}{
 
@@ -33,7 +33,7 @@ One 'queue' can follows an abritrary number of tasks run in parallel.
 
 \section{from Parameter}{
 
-from parameter can be either a single charater value,
+from parameter can be either a single character value,
 \describe{
   \item{key}{redis key where the current queue name is stored in case of publish strategy}
 }

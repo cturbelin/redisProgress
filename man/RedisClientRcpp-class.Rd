@@ -15,7 +15,7 @@ Internal class
 \describe{
 \item{\code{args}}{arguments to use to connect to the redis database}
 
-\item{\code{cnx}}{connexion instance return by the backend}
+\item{\code{cnx}}{connection instance return by the backend}
 
 \item{\code{database}}{database number to connect to}
 }}

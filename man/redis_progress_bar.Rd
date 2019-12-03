@@ -31,7 +31,7 @@ The progress bar instance is currently a very simple object-mimic list exposing 
  \item{message}{Send a message}
  \item{task}{get the task name}
  \item{queue}{get the queue name}
- \item{value}{get the queue name}
+ \item{value}{get the current step value}
 }
 Parameters of these functions (if any), are described in the following sections
 }

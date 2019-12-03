@@ -2,13 +2,16 @@ redisProgress Package
 ================
 Clément Turbelin
 
-Overview
---------
+## Overview
 
-The goal of redisProgress is to create a progress bar system to follow tasks distributed accross several R instances (using foreach package for example). It uses Redis instance to follow tasks progress. Tasks are grouped in a common named "queue" and can be monitored together on the same screen.
+The goal of redisProgress is to create a progress bar system to follow
+tasks distributed across several R instances (on the same host or
+several). It uses Redis instance to follow tasks progress.
 
-Installation
-------------
+Tasks are grouped in a named “queue” and can be monitored together on
+the same screen.
+
+## Installation
 
 ``` r
 # Install the released version from CRAN:
@@ -19,19 +22,31 @@ install.packages("redisProgress")
 devtools::install_github("cturbelin/redisProgress")
 ```
 
-Usage
------
+## features
 
-See introduction [vignettes/introduction.Rmd](vignettes/introduction.Rmd)
+  - Register progress about a set of tasks (grouped into a named
+    `queue`), each task can have an arbitrary number of steps.
+  - Task can log a message to the progress queue
+  - Queue name can be generated ensuring it’s unique (a new queue name
+    will be generated each time the main script is run).
+  - Progress of tasks of a queue can be followed using
+    `redis_progress_monitor()`.
 
-Redis Client implementations
-----------------------------
+## Usage
+
+See introduction
+[vignettes/introduction.Rmd](vignettes/introduction.Rmd)
+
+## Redis Client implementations
 
 redisProgress can handle several packages implementing redis client API
 
--   rredis
--   RCppRedis
--   redux
--   rrlite (Redis without Redis)
+  - rredis
+  - RCppRedis
+  - redux
+  - rrlite (Redis without Redis)
 
-`redis_client()` creates a client object embedding the connection context, using a unified interface, regardless the redis package used. The connection parameters (host, port,...) will be propagated to the R instances
+`redis_client()` creates a client object embedding the connection
+context, using a unified interface, regardless the redis package used.
+The connection parameters (host, port,…) will be propagated to the R
+instances.

@@ -9,7 +9,7 @@
 #' @return queue name with the configured prefix
 #'
 #' @examples
-#' redis_queue_name
+#' redis_queue_name("queue-01")
 #'
 #' @export
 redis_queue_name = function(name) {
@@ -19,11 +19,11 @@ redis_queue_name = function(name) {
 
 #' Defined a way to publish a queue name
 #'
-#' In some context you need to create a random queue name to make it unique. By doing this you dont know
+#' In some context you need to create a random queue name to make it unique. By doing this you don't know
 #' the real queue name before to run the script.
 #' The publish feature allows to store this queue name once it's created under a predefined key name.
 #'
-#' This function should be used to set the `publish` parameter of \code{\link{}}
+#' This function should be used to set the `publish` parameter of \code{\link{create_redis_progress}}
 #'
 #' @param name key name to use to publish last generated queue name
 #' @param type type of storage to use (see details)

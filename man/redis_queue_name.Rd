@@ -17,6 +17,6 @@ Queue are stored using a common prefix in the `redis` key. The prefix is defined
 under the `queue_prefix` entry.
 }
 \examples{
-redis_queue_name
+redis_queue_name("queue-01")
 
 }

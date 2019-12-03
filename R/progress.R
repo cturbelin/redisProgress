@@ -177,7 +177,8 @@ redis_progress_bar = function(name, redis, debug=FALSE) {
 #' progress$incr(3) # Increase the progress counter by a value
 #'
 #' # Create a progress with a random name and publish under in "myjobs" key
-#' progress = create_redis_progress("queue01", redis=client, publish=publish_queue("myjobs"), unique.name=TRUE)
+#' publish_to = publish_queue("myjobs", type="key")
+#' progress = create_redis_progress("queue01", redis=client, publish=publish_to, unique.name=TRUE)
 create_redis_progress = function(name, redis=NULL, publish=NULL, debug=FALSE, unique.name=FALSE, append=TRUE, verbose=TRUE) {
 
     if( is.null(redis) ) {

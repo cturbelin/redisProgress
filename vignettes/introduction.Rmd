@@ -87,7 +87,7 @@ data = foreach(job=1:20, .verbose = TRUE, .combine = c, .export = "progress") %d
 
 stopImplicitCluster()
 ```
-`progress` object is propagated accross all R workers ensuring the tasks are registered in the same 
+`progress` object is propagated across all R workers ensuring the tasks are registered in the same 
 job queue and on the same Redis server.
 
 In this example the parameter `unique` will create a unique queue name ensuring the queue is unique each time the program is run. The given queue name is used as a prefix the the generated unique queue name.

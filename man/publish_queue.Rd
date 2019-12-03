@@ -14,12 +14,12 @@ publish_queue(name, type = c("key", "list"), prefix = FALSE)
 \item{prefix}{use queue prefix to the key (by default false)}
 }
 \description{
-In some context you need to create a random queue name to make it unique. By doing this you dont know
+In some context you need to create a random queue name to make it unique. By doing this you don't know
 the real queue name before to run the script.
 The publish feature allows to store this queue name once it's created under a predefined key name.
 }
 \details{
-This function should be used to set the `publish` parameter of \code{\link{}}
+This function should be used to set the `publish` parameter of \code{\link{create_redis_progress}}
 
 
 Using 'key' as type will only store the last created, 'list' will store it in a list as the last element

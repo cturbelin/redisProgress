@@ -544,7 +544,7 @@ RedisClientMock = setRefClass("RedisClientMock",
 #' extra dependency, limited to this package needs.
 #'
 #' The returned "client" embeds connection configuration and can be propagated in distributed workers
-#' (like with `foreach` package). So the client connection parameters are only to be defined once.
+#' (like with "foreach" package). So the client connection parameters are only to be defined once.
 #'
 #'
 #' The returned instance exposes the following functions :

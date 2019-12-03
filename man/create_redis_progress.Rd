@@ -71,5 +71,6 @@ progress$message("My task is running well")
 progress$incr(3) # Increase the progress counter by a value
 
 # Create a progress with a random name and publish under in "myjobs" key
-progress = create_redis_progress("queue01", redis=client, publish=publish_queue("myjobs"), unique.name=TRUE)
+publish_to = publish_queue("myjobs", type="key")
+progress = create_redis_progress("queue01", redis=client, publish=publish_to, unique.name=TRUE)
 }

@@ -8,7 +8,7 @@
 #' Internal class.
 #' @keywords internal
 #' @family backend
-#' @seealso \code{\link{redis_client}}
+#' @seealso \code{\link{redis_client}()}
 RedisClientRRedis = setRefClass("RedisClientRRedis",
     fields = list(
         "args"="list",
@@ -48,7 +48,7 @@ RedisClientRRedis = setRefClass("RedisClientRRedis",
         },
 
         hashSet = function(key, field, value) {
-            "set the field in a HSet with a value"
+            "set the field in a 'HSet' with a value"
             rredis::redisHSet(key = key, field=field, value=value, NX=FALSE)
             # rredis HSet returns "0" whatever success or not
             return(TRUE)
@@ -61,12 +61,12 @@ RedisClientRRedis = setRefClass("RedisClientRRedis",
         },
 
         hashGet = function(key, field) {
-            "Get the value of a field in a HSet"
+            "Get the value of a field in a 'HSet'"
             rredis::redisHGet(key, field)
         },
 
         hashGetAll = function(key) {
-          "Get all fields of an HSet"
+          "Get all fields of an 'HSet'"
             rredis::redisHGetAll(key)
         },
 
@@ -538,23 +538,30 @@ RedisClientMock = setRefClass("RedisClientMock",
 #' connect to the same redis database.
 #'
 #' @details RedisClient:
-#' Returns an instance of `RedisClient` class with methods allowing to manipulate *Redis* database using a unified interface
+#' Returns an instance of \code{RedisClient} class with methods allowing to manipulate 'Redis' database using a unified interface
 #'
-#' As this package only needs a subset of *Redis* commands are implemented. It's a very simple implementation to avoid
+#' As this package only needs a subset of 'Redis' commands are implemented. It's a very simple implementation to avoid
 #' extra dependency, limited to this package needs.
 #'
 #' The returned "client" embeds connection configuration and can be propagated in distributed workers
-#' (like with "foreach" package). So the client connection parameters are only to be defined once.
+#' (like with 'foreach' package). So the client connection parameters are only to be defined once.
 #'
+#' Clients:
 #'
+#' \describe{
+#'  \item{rredis}{rredis package, discontinued}
+#'  \item{rcpp}{for RcppRedis}
+#'  \item{rredux}{for redux and rrlite}
+#'  \item{mock}{Mock type, in memory R-only client}
+#' }
 #' The returned instance exposes the following functions :
 #' \describe{
 #' \item{connect()}{connect to redis db}
 #' \item{get(key)}{get key value}
-#' \item{hashGet(key, field)}{get field value in HashSet named by key}
-#' \item{hashSet(key, field, value)}{set field value in HashSet named by key}
-#' \item{hashSetCounter(key, field, value)}{set field value for a counter in HashSet named by `key`}
-#' \item{hashIncrBy(key, field, by)}{Increment a field by the amount provided in `by`. Caution the field must have been initialized by hashSetCounter not by hashSet }
+#' \item{hashGet(key, field)}{get field value in \code{HashSet} named by key}
+#' \item{hashSet(key, field, value)}{set field value in \code{HashSet} named by key}
+#' \item{hashSetCounter(key, field, value)}{set field value for a counter in HashSet named by \code{key}}
+#' \item{hashIncrBy(key, field, by)}{Increment a field by the amount provided in \code{by}. Caution the field must have been initialized by \code{hashSetCounter} not by \code{hashSet} }
 #' \item{delete(key)}{remove the key key value}
 #' \item{exists(key)}{returns TRUE the key exists}
 #' \item{pushTail(key, value)}{add a value on the tail of the list named by key}
@@ -569,7 +576,7 @@ RedisClientMock = setRefClass("RedisClientMock",
 #'  \item{...}{Some other parameters, not yet normalized across interfaces}
 #' }
 #'
-#' @param type type of client to use (rredis, rcpp for RcppRedis)
+#' @param type type of client, see details
 #' @param ... parameters to transmit to the client implementation (host, port, ...)
 #' @return instance of a RedisClient class (described in details section)
 #'

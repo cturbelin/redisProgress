@@ -7,7 +7,7 @@
 redis_client(type = NULL, ...)
 }
 \arguments{
-\item{type}{type of client to use (rredis, rcpp for RcppRedis)}
+\item{type}{type of client, see details}
 
 \item{...}{parameters to transmit to the client implementation (host, port, ...)}
 }
@@ -20,23 +20,30 @@ connect to the same redis database.
 }
 \details{
 RedisClient:
-Returns an instance of `RedisClient` class with methods allowing to manipulate *Redis* database using a unified interface
+Returns an instance of \code{RedisClient} class with methods allowing to manipulate 'Redis' database using a unified interface
 
-As this package only needs a subset of *Redis* commands are implemented. It's a very simple implementation to avoid
+As this package only needs a subset of 'Redis' commands are implemented. It's a very simple implementation to avoid
 extra dependency, limited to this package needs.
 
 The returned "client" embeds connection configuration and can be propagated in distributed workers
-(like with "foreach" package). So the client connection parameters are only to be defined once.
+(like with 'foreach' package). So the client connection parameters are only to be defined once.
 
+Clients:
 
+\describe{
+ \item{rredis}{rredis package, discontinued}
+ \item{rcpp}{for RcppRedis}
+ \item{rredux}{for redux and rrlite}
+ \item{mock}{Mock type, in memory R-only client}
+}
 The returned instance exposes the following functions :
 \describe{
 \item{connect()}{connect to redis db}
 \item{get(key)}{get key value}
-\item{hashGet(key, field)}{get field value in HashSet named by key}
-\item{hashSet(key, field, value)}{set field value in HashSet named by key}
-\item{hashSetCounter(key, field, value)}{set field value for a counter in HashSet named by `key`}
-\item{hashIncrBy(key, field, by)}{Increment a field by the amount provided in `by`. Caution the field must have been initialized by hashSetCounter not by hashSet }
+\item{hashGet(key, field)}{get field value in \code{HashSet} named by key}
+\item{hashSet(key, field, value)}{set field value in \code{HashSet} named by key}
+\item{hashSetCounter(key, field, value)}{set field value for a counter in HashSet named by \code{key}}
+\item{hashIncrBy(key, field, by)}{Increment a field by the amount provided in \code{by}. Caution the field must have been initialized by \code{hashSetCounter} not by \code{hashSet} }
 \item{delete(key)}{remove the key key value}
 \item{exists(key)}{returns TRUE the key exists}
 \item{pushTail(key, value)}{add a value on the tail of the list named by key}

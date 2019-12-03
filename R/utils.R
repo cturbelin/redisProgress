@@ -1,9 +1,9 @@
 # utils.R
 
-#' Get the real name of the queue including current queue's prefix in the `Redis` server
+#' Get the real name of the queue including current queue's prefix in the \emph{Redis} server
 #'
-#' Queue are stored using a common prefix in the `redis` key. The prefix is defined in the options
-#' under the `queue_prefix` entry.
+#' Queue are stored using a common prefix in the \code{redis} key. The prefix is defined in the options
+#' under the 'queue_prefix' entry.
 #'
 #' @param name name of the queue (without prefix)
 #' @return queue name with the configured prefix
@@ -23,7 +23,7 @@ redis_queue_name = function(name) {
 #' the real queue name before to run the script.
 #' The publish feature allows to store this queue name once it's created under a predefined key name.
 #'
-#' This function should be used to set the `publish` parameter of \code{\link{create_redis_progress}}
+#' This function should be used to set the \code{publish} parameter of \code{\link{create_redis_progress}}
 #'
 #' @param name key name to use to publish last generated queue name
 #' @param type type of storage to use (see details)

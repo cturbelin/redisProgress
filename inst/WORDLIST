@@ -3,6 +3,8 @@ rredis
 rrlite
 redux
 RedisClient
-RCppRedis
 HashSet
 doRedis
+foreach
+keyspace
+RcppRedis

@@ -33,8 +33,8 @@
 #'  \item{init}{Initial step value}
 #' }
 #'
-#' @section \code{step_task(newvalue)}:
-#' Define the current task step to be newvalue
+#' @section \code{step_task(value)}:
+#' Define the current task step to be value
 #'
 #' @section \code{message(msg)}:
 #' Send a message

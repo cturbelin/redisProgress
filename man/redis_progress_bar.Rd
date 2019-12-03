@@ -47,9 +47,9 @@ Declare the starting of a task
 }
 }
 
-\section{\code{step_task(newvalue)}}{
+\section{\code{step_task(value)}}{
 
-Define the current task step to be newvalue
+Define the current task step to be value
 }
 
 \section{\code{message(msg)}}{

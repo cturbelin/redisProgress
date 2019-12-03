@@ -34,17 +34,16 @@ devtools::install_github("cturbelin/redisProgress")
 
 ## Usage
 
-See introduction
-[vignettes/introduction.Rmd](vignettes/introduction.Rmd)
+See [introduction vignette](vignettes/introduction.Rmd)
 
 ## Redis Client implementations
 
 redisProgress can handle several packages implementing redis client API
 
-  - rredis
-  - RCppRedis
-  - redux
-  - rrlite (Redis without Redis)
+  - `rredis`
+  - `RcppRedis`
+  - `redux`
+  - `rrlite` (Redis without Redis)
 
 `redis_client()` creates a client object embedding the connection
 context, using a unified interface, regardless the redis package used.

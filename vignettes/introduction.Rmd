@@ -116,7 +116,7 @@ redis_progress_monitor(list(key="jobs:clement"), redis=redis)
 redisProgress can handle several packages implementing redis client API
  
 - rredis
-- RCppRedis
+- RcppRedis
 - redux
 - rrlite (Redis without Redis)
 - mock (R only backend, used to test other functions without having a `Redis` instance running)

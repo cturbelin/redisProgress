@@ -2,7 +2,7 @@
 % Please edit documentation in R/utils.R
 \name{redis_queue_name}
 \alias{redis_queue_name}
-\title{Get the real name of the queue including current queue's prefix in the `Redis` server}
+\title{Get the real name of the queue including current queue's prefix in the \emph{Redis} server}
 \usage{
 redis_queue_name(name)
 }
@@ -13,8 +13,8 @@ redis_queue_name(name)
 queue name with the configured prefix
 }
 \description{
-Queue are stored using a common prefix in the `redis` key. The prefix is defined in the options
-under the `queue_prefix` entry.
+Queue are stored using a common prefix in the \code{redis} key. The prefix is defined in the options
+under the 'queue_prefix' entry.
 }
 \examples{
 redis_queue_name("queue-01")

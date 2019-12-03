@@ -96,7 +96,7 @@ for(client_type in names(clients)) {
         client$hashIncrBy(key, "counter", 1)
 
         v = client$hashGet(key, "counter")
-        if(client_type == "redux") {
+        if(client_type %in% c("redux","rredis")) {
             v = as.integer(v) # Redux cast to string
         }
 

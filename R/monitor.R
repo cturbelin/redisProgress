@@ -53,42 +53,11 @@ redis_progress_monitor = function(from, redis=NULL, options=list(), debug=TRUE) 
     redis$connect()
     if( !is.null(redis$cnx) ) {
         if(debug) {
-            message(" Connected\n")
+            message("Connected")
         }
     }
 
-    if(is.character(from)) {
-        queues = redis_queue_name(from)
-    } else {
-        if( !is.list(from) ) {
-            stop("from should be either a character vector")
-        }
-        if( !is.null(from$name) ) {
-            queues = redis_queue_name(from$name)
-        }
-        if( !is.null(from$key) ) {
-            queues = redis_queue_name(redis$get(from$key))
-            if(is.null(queues)) {
-                stop(paste("Unable to find queue name using key", from$key))
-            }
-        }
-    }
-
-    # Compute elapsed string
-    elapsed_time = function(elapsed) {
-        times = c("d"=86400,"h"=3600, "m"=60)
-        i = 1
-        n = length(times)
-        while(i <= n) {
-            m = times[i]
-            if(elapsed > m) {
-                elapsed = floor(elapsed / m)
-                return(paste0(sprintf("%3d", elapsed), names(m)))
-            }
-            i = i + 1
-        }
-        paste0(sprintf("%3d",elapsed), "s")
-    }
+    queues = get_redis_queue(from, redis)
 
    format_task = function(name, value, steps, started) {
         prop = NULL # Completion proportion
@@ -103,16 +72,15 @@ redis_progress_monitor = function(from, redis=NULL, options=list(), debug=TRUE) 
         elapsed = floor(as.numeric(Sys.time()) - started)
 
         if(!is.null(prop) && options$use.bar) {
-            nbars = floor(prop * options$bar.size)
-            b = paste0(" |", paste0(rep.int("=", nbars), collapse = ""), paste0(rep.int(" ",  options$bar.size - nbars), collapse = ""),"| ")
+            b = str_bar(prop, options$bar.size)
         } else {
             b = ""
         }
 
-        sprintf(paste0("%-",width,"s (%5s) ",b, format), name, elapsed_time(elapsed), value)
+        sprintf(paste0("%-", width, "s (%5s) ",b, format), name, elapsed_time(elapsed), value)
     }
 
-    log.names = paste0(queues, ":logs")
+    log.names = queue_log_name(queues)
     log.indexes = rep(0, length(log.names))
 
     defs = list(use.bar = TRUE, bar.size = 20, steps = NULL, ncol = 2, sleep=1, log.size=10)
@@ -122,7 +90,7 @@ redis_progress_monitor = function(from, redis=NULL, options=list(), debug=TRUE) 
     cls = clear_console()
 
     if(debug) {
-        cat("Monitoring queues ", queues, "\n")
+        message("Monitoring queues ", queues)
         cls = function() {}
     } else {
         cls = clear_console()
@@ -135,19 +103,19 @@ redis_progress_monitor = function(from, redis=NULL, options=list(), debug=TRUE) 
 
             name = queues[queue.index]
             if(debug) {
-                message("Queue : ", name,"\n")
+                message("Queue : ", name)
             }
 
             # Get all data
             h = redis$hashGetAll(name)
 
             if(is.null(h)) {
-                warning("Unable to get hash", name," waiting...\n")
+                warning("Unable to get hash", name," waiting...")
                 Sys.sleep(5)
                 next()
             } else {
                 if(debug) {
-                    message("Hash ", length(h), "fields\n")
+                    message("Hash ", length(h), "fields")
                 }
             }
 
@@ -162,8 +130,8 @@ redis_progress_monitor = function(from, redis=NULL, options=list(), debug=TRUE) 
             # For some client type counter are stored are raw string, convert
             values = lapply(values, as.integer)
 
-            started = h[ paste0(tasks,":started") ]
-            steps = h[ paste0(tasks,":steps") ]
+            started = h[ task_started(tasks) ]
+            steps = h[ task_steps(tasks) ]
 
             # Maximum
             width = max(nchar(tasks))
@@ -213,3 +181,29 @@ clear_console = function() {
     }
     # default clear function
 }
+
+#' Get Redis queue
+#' Internal function
+#' @param from from parameter
+#' @param redis redis_client
+#' @noRd
+get_redis_queue = function(from, redis) {
+    if(is.character(from)) {
+        queues = redis_queue_name(from)
+    } else {
+        if( !is.list(from) ) {
+            stop("from should be either a character vector")
+        }
+        if( !is.null(from$name) ) {
+            queues = redis_queue_name(from$name)
+        }
+        if( !is.null(from$key) ) {
+            queues = redis_queue_name(redis$get(from$key))
+            if(is.null(queues)) {
+                stop(paste("Unable to find queue name using key", from$key))
+            }
+        }
+    }
+    queues
+}
+

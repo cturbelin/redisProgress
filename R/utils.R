@@ -64,3 +64,35 @@ redis_cleanup_progress = function(name, redis=NULL) {
     keys = redis$keys(pattern = paste0(queue,"*"))
     invisible(sapply(keys, redis$delete))
 }
+
+#' @noRd
+redis_progress_queues = function(pattern="*", redis) {
+    queues = redis$keys(redis_queue_name(pattern))
+    prefix = get_option("queue_prefix")
+
+    queues = queues[!grepl("\\:logs$", queues)]
+
+    qd = lapply(queues, function(queue) {
+        type = redis$type(queue)
+        if(type != "hash") {
+            return(NULL)
+        }
+        h =  redis$hashGetAll(queue)
+        created = as_time(h$"_created_")
+        if(length(created) == 0) {
+            created = NA
+        }
+        n = names(h)
+        n = n[!grepl("^_", n)]
+        # Task names (should not have ":")
+        tasks = unique(gsub(":(.*)$","", n))
+
+        name = gsub(prefix, "", queue, fixed=TRUE)
+
+        time = as_time(created)
+        data.frame(name=name, time=time, n=length(tasks))
+    })
+    qd = do.call(rbind, qd)
+    qd = qd[ order(qd$time, decreasing = T), ]
+    qd
+}

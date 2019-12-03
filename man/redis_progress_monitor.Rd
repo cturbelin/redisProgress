@@ -4,8 +4,7 @@
 \alias{redis_progress_monitor}
 \title{Monitor Progress of a tasks queue}
 \usage{
-redis_progress_monitor(from, redis = NULL, options = list(),
-  debug = TRUE)
+redis_progress_monitor(from, redis = NULL, options = list(), debug = TRUE)
 }
 \arguments{
 \item{from}{source of the queue to monitor, simplest is the queue name (without the queue prefix)}
